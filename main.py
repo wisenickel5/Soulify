@@ -7,16 +7,8 @@ import sqlalchemy
 app = Flask(__name__)
 app.config.from_object(config)
 
-# connect to google cloud mysql
-engine = sqlalchemy.create_engine(
-        sqlalchemy.engine.url.URL(
-        drivername='mysql+pymysql',
-        username='root',
-        password=app.config['DATABASE_PASSWORD'],
-        database=app.config['DATABASE_NAME'],
-        unix_socket="/tmp/mysql.sock" # Currently debugging connection to DB
-    ),
-)
+# connect to local instance of mysqlDB server
+engine = sqlalchemy.create_engine('mysql+pymysql://scott:tiger@localhost/foo')
 
 # create session and base declarative
 from sqlalchemy.orm import sessionmaker
