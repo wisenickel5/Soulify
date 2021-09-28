@@ -1,8 +1,8 @@
 from flask import render_template, redirect, request, session, make_response, jsonify, abort
 from main import app
 from authenticate import createStateKey, getToken
-from user_operations import getUserDevices, getUserPlaylists ,createStateKey, getToken, getUserInformation, getUserPlaylists, getUserDevices, addUser
-from services import  createStateKey, getToken, getUserInformation, getAllTopTracks, getTopTracksURI, getRecommendedTracks, getUserPlaylists, getUserDevices, createPlaylist, addTracksPlaylist, shuffle, startPlayback, startPlaybackContext, pausePlayback, getTrackAfterResume, skipTrack, getTrack, searchSpotify
+from user_operations import getUserDevices, getUserPlaylists, getUserInformation, getUserPlaylists, getUserDevices, addUser
+from services import getAllTopTracks, getTopTracksURI, getRecommendedTracks, createPlaylist, addTracksPlaylist, shuffle, startPlayback, startPlaybackContext, pausePlayback, getTrackAfterResume, skipTrack, getTrack, searchSpotify
 
 
 import time
