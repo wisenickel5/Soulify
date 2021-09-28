@@ -5,8 +5,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import sqlalchemy
 
 app = Flask(__name__)
-app.secret_key = app.config['CLIENT_SECRET']
 app.config.from_object(config)
+app.secret_key = app.config['CLIENT_SECRET']
+
 
 # connect to local instance of mysqlDB server
 engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=True)

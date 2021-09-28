@@ -6,42 +6,78 @@ import random as rand
 import logging
 
 def createStateKey(size):
-	#https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
+	"""Provides a state key for authorization request. To prevent forgery attacks, the state key
+	is used to make sure that the response comes from the same place that the request was sent from.
+	Reference: https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
+	
+	Args:
+		size (int): Determines the size of the State Key
+
+	Returns:
+		string: A randomly generated code with the length of the size parameter
+	"""
 	return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
 def getToken(code):
-        token_url = 'https://accounts.spotify.com/api/token'
-        authorization = app.config['AUTHORIZATION']
-        redirect_uri = app.config['REDIRECT_URI']
+	"""Requests an access token from Spotify API. This function is only called if
+	the current user does not have a refresh token.
 
-        headers = { 'Authorization': authorization,
-                'Accept': 'Soulify/json',
-                'Content-Type': 'application/x-www-form-urlencoded'}
-        body = {'code': code, 'redirect_uri': redirect_uri,
-                'grant-type': 'authorization_code'}
+	Args:
+		code (string): Value returned from HTTP GET Request
 
-        post_response = requests.post(token_url, headers=headers, data=body)
+	Returns:
+		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
+	"""
+	token_url = 'https://accounts.spotify.com/api/token'
+	authorization = app.config['AUTHORIZATION']
+	redirect_uri = app.config['REDIRECT_URI']
 
-        if post_response.status_code == 200:
-                pr = post_response.json()
-                return pr['access_token'], pr['refresh_token'], pr['expires_in']
-        else:
-                logging.error('getToken: ' + str(post_response.status_code))
-                return None
+	headers = { 'Authorization': authorization,
+			'Accept': 'Soulify/json',
+			'Content-Type': 'application/x-www-form-urlencoded'}
+	body = {'code': code, 'redirect_uri': redirect_uri,
+			'grant-type': 'authorization_code'}
+
+	post_response = requests.post(token_url, headers=headers, data=body)
+
+	if post_response.status_code == 200:
+		pr = post_response.json()
+		return pr['access_token'], pr['refresh_token'], pr['expires_in']
+	else:
+		logging.error('getToken: ' + str(post_response.status_code))
+		return None
 
 def checkTokenStatus(session):
-        if time.time() > session['token_expiration']:
-                payload = refreshToken(session['refresh_token'])
+	"""Determines if the new access token must be requested based on time expiration
+	of previous token.
 
-        if payload != None:
-                session['token'] = payload[0]
-                session['token_expiration'] = time.time() + payload[1]
-        else:
-                logging.error('checkTokenStatus')
-                return None
-        return "Success"
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		string: Success log
+	"""
+	if time.time() > session['token_expiration']:
+		payload = refreshToken(session['refresh_token'])
+
+	if payload != None:
+		session['token'] = payload[0]
+		session['token_expiration'] = time.time() + payload[1]
+	else:
+		logging.error('checkTokenStatus')
+		return None
+	return "Success"
 
 def refreshToken(refresh_token):
+	"""POST Request is made to Spotify API with refresh token (only if access token and
+	refresh token were previously acquired) creating a new access token
+
+	Args:
+		refresh_token (string)
+
+	Returns:
+		tuple(str, str): Access Token, Expiration Time
+	"""
 	token_url = 'https://accounts.spotify.com/api/token'
 	authorization = app.config['AUTHORIZATION']
 
@@ -57,19 +93,41 @@ def refreshToken(refresh_token):
 		return None
 
 def makeGetRequest(session, url, params={}):
-        headers = {'Authorization': "Bearer {}".format(session['token'])}
-        response = requests.get(url, headers=headers, params=params)
+	"""Recursively make GET Request to Spotify API with necessary headers
+	unitl a status code that equals 200 is recieved or log the error.
 
-        if response.status_code == 200:
-                return response.json()
-        elif response.status_code == 401 and checkTokenStatus(session) != None:
-                return makeGetRequest(session, url, params)
-        else:
-                logging.error('makeGetRequests:' + str(response.status_code))
-                return None
+	Args:
+		session (Session): Flask Session Object
+		url (string): URL
+		params (dict, optional): Parameters being sent to API. Defaults to {}.
+
+	Returns:
+		dictionary: JSON Response
+	"""
+	headers = {'Authorization': "Bearer {}".format(session['token'])}
+	response = requests.get(url, headers=headers, params=params)
+
+	if response.status_code == 200:
+		return response.json()
+	elif response.status_code == 401 and checkTokenStatus(session) != None:
+		return makeGetRequest(session, url, params)
+	else:
+		logging.error('makeGetRequests:' + str(response.status_code))
+		return None
 
 def makePutRequest(session, url, params={}, data={}):
+	"""Recursively make PUT Request to Spotify API with necessary headers
+	unitl a status code that equals 204, 403, 404 is recieved or log the error. 
 
+	Args:
+		session (Session): Flask Session Object
+		url (string): URL
+		params (dict, optional): Parameters being sent to API. Defaults to {}.
+		data (dict, optional): Resource to be created or replaced. Defaults to {}.
+
+	Returns:
+		int: Status Code
+	"""
 	headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
 	response = requests.put(url, headers=headers, params=params, data=data)
 
@@ -85,7 +143,17 @@ def makePutRequest(session, url, params={}, data={}):
 		return None
 
 def makePostRequest(session, url, data):
+	"""Recursively make POST Request to Spotify API with resource to be created
+	unitl a status code that equals 201/204 is recieved or log the error.
 
+	Args:
+		session (Session): Flask Session Object
+		url (string): URL
+		data (dict): Resource to be created
+
+	Returns:
+		[type]: [description]
+	"""
 	headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json', 'Content-Type': 'application/json'}
 	response = requests.post(url, headers=headers, data=data)
 
@@ -105,6 +173,17 @@ def makePostRequest(session, url, data):
 		return None
 
 def makeDeleteRequest(session, url, data):
+	"""Recursively make DELETE Request to Spotify API with resource to be deleted
+	unitl a status code that equals 200 is recieved or log the error.
+
+	Args:
+		session (Session): Flask Session Object
+		url (string): URL
+		data (dict): Resource to be deleted
+
+	Returns:
+		dict : JSON Response
+	"""
 	headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json', 'Content-Type': 'application/json'}
 	response = requests.delete(url, headers=headers, data=data)
 
