@@ -5,12 +5,17 @@ VisualStudioVersion = 16.0.810.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4F9F5312-6EFF-448E-9409-C19C6B8D9ACF}"
 	ProjectSection(SolutionItems) = preProject
-		..\authorize.py = ..\authorize.py
-		..\config.py = ..\config.py
-		..\main.py = ..\main.py
-		..\Pipfile = ..\Pipfile
-		..\Pipfile.lock = ..\Pipfile.lock
-		..\README.md = ..\README.md
+		authenticate.py = authenticate.py
+		config.py = config.py
+		db_actions.py = db_actions.py
+		main.py = main.py
+		Pipfile = Pipfile
+		Pipfile.lock = Pipfile.lock
+		README.md = README.md
+		routes.py = routes.py
+		services.py = services.py
+		Soulify.sln = Soulify.sln
+		user_operations.py = user_operations.py
 	EndProjectSection
 EndProject
 Global
