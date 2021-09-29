@@ -6,6 +6,8 @@ import sqlalchemy
 
 app = Flask(__name__)
 app.config.from_object(config)
+app.secret_key = app.config['CLIENT_SECRET']
+
 
 # connect to local instance of mysqlDB server
 engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=True)
