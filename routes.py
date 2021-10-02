@@ -8,17 +8,24 @@ from services import getAllTopTracks, getTopTracksURI, getRecommendedTracks, cre
 import time
 import logging
 
+"""connecting hompage to url
+"""
+
 @app.route('/')
 @app.route('/index')
 def index():
 	return render_template('index.html')
-
+""" activates when the user decides to not allow app to use their account 
+and redirect them to the account page 
+"""
 @app.route('/authorize')
 def authorize():
 	client_id = app.config['CLIENT_ID']
 	client_secret = app.config['CLIENT_SECRET']
 	redirect_uri = app.config['REDIRECT_URI']
 	scope = app.config['SCOPE']
+
+
 
 	# state key used to protect against cross-site forgery attacks
 	state_key = createStateKey(15)
@@ -30,6 +37,10 @@ def authorize():
 	response = make_response(redirect(authorize_url + parameters))
 
 	return response
+	""" 
+	this activates when the new user accesses their account through the webpage
+	and it takes them to the page the wanted to get to
+	"""
 
 
 @app.route('/callback')
@@ -58,11 +69,15 @@ def callback():
 
 	return redirect(session['previous_url'])
 
-
+	"""
+	displays policies and information about features on the app
+	"""
 @app.route('/information',  methods=['GET'])
 def information():
 	return render_template('information.html')
-
+	"""
+	shows most played track by user over many time peiords
+	"""
 @app.route('/tracks',  methods=['GET'])
 def tracks():
 	# make sure application is authorized for user 
@@ -81,7 +96,9 @@ def tracks():
 		return render_template('index.html', error='Failed to gather top tracks.')
 		
 	return render_template('tracks.html', track_ids=track_ids)
-
+	"""
+	allows user to create  plalist by searching song title/artist
+	"""
 @app.route('/create',  methods=['GET'])
 def create():
 	# make sure application is authorized for user 
@@ -95,7 +112,10 @@ def create():
 		session['user_id'] = current_user['id']
 
 	return render_template('create.html')
-
+	"""
+shows platfrom of device an playlist being played from an a timer set as well as
+the timer countdown
+	"""
 @app.route('/timer',  methods=['GET'])
 def timer():
 	# make sure application is authorized for user 
@@ -119,7 +139,12 @@ def timer():
 	playlist_length = len(playlist_names)
 
 	return render_template('timer.html', playlist_names=playlist_names, playlist_length=playlist_length, device_names=device_names, device_length=device_length)
-
+	"""
+activates whenever the user saves a new playlist which creates another new 
+enity of playlist and stores new tracks
+and then when the choose to autoupdate the ids are stored into the data to be updated 
+in the future 
+	"""
 @app.route('/tracks/topplaylist',  methods=['POST'])
 def createTopPlaylist():
 
@@ -151,7 +176,11 @@ def createTopPlaylist():
 
 	# send back the created playlist URI so the user is redirected to Spotify
 	return playlist_uri
+	"""
+activates when user useses the create feature. the users artist/track id 
+before date are gathered to fill playlist as well as recomened tracks
 
+	"""
 @app.route('/create/playlist',  methods=['POST'])
 def createSelectedPlaylist():
 	# collect the IDs of the artists/tracks the user entered
@@ -185,7 +214,12 @@ def createSelectedPlaylist():
 
 	# send back the created playlist URI so the user is redirected to Spotify
 	return playlist_uri
+	"""
 
+activates when user uses the intervel timer,
+ the user selected playlist is started with the timer
+
+	"""
 @app.route('/timer/start',  methods=['POST'])
 def intervalStart():
 	playlist = request.form['playlist']
@@ -219,7 +253,13 @@ def intervalStart():
 	# return current track so picture and name can be displayed to user
 	current_playing = getTrackAfterResume(session)
 	return jsonify(current_playing)
+	"""
+activates as the user types into search bar in the create feature
+it automatically finishes the statmnent for user an sends back possible 
+outcomes
 
+
+	"""
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     search = request.args.get('q')
@@ -227,7 +267,11 @@ def autocomplete():
 
     return jsonify(matching_results=results)
 
+"""
+activates when song time is over it skips to the next song
 
+
+"""
 @app.route('/playback/skip')
 def playbackSkip():
 	response = skipTrack(session)
@@ -240,7 +284,12 @@ def playbackSkip():
 	# return current track so picture and name can be displayed to user
 	current_playing = getTrack(session)
 	return jsonify(current_playing)
+	"""
 
+activates when user hits pause button stops song timer
+
+
+	"""
 @app.route('/playback/pause')
 def playbackPause():
 	response = pausePlayback(session)
@@ -250,7 +299,12 @@ def playbackPause():
 	if response == 404:
 		abort(404)
 	return "success"
+	"""
+activates when the user has touched pause button for a second time
 
+
+
+	"""
 @app.route('/playback/resume')
 def playbackResume():
 	response = startPlayback(session, session['device'])
