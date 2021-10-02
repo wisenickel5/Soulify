@@ -1,12 +1,20 @@
-from flask import render_template, redirect, request, session, make_response, jsonify, abort
-from main import app
-from authenticate import createStateKey, getToken
-from user_operations import getUserDevices, getUserPlaylists, getUserInformation, getUserPlaylists, getUserDevices, addUser
-from services import getAllTopTracks, getTopTracksURI, getRecommendedTracks, createPlaylist, addTracksPlaylist, shuffle, startPlayback, startPlaybackContext, pausePlayback, getTrackAfterResume, skipTrack, getTrack, searchSpotify
-
-
-import time
 import logging
+import time
+
+# Flask Imports
+from flask import (abort, jsonify, make_response, redirect, render_template,
+                   request, session)
+
+# Local Imports
+from authenticate import createStateKey, getToken
+from main import app
+from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
+                      getRecommendedTracks, getTopTracksURI, getTrack,
+                      getTrackAfterResume, pausePlayback, searchSpotify,
+                      shuffle, skipTrack, startPlayback, startPlaybackContext)
+from user_operations import (addUser, getUserDevices, getUserInformation,
+                             getUserPlaylists)
+
 
 @app.route('/')
 @app.route('/index')
@@ -30,7 +38,7 @@ def authorize():
 	response = make_response(redirect(authorize_url + parameters))
 
 	return response
-
+	
 
 @app.route('/callback')
 def callback():

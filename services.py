@@ -1,10 +1,17 @@
-from main import Base, Session
-from user_operations import User
-from authenticate import refreshToken, makeGetRequest, makePostRequest, makePutRequest
-from db_actions import dbAddTracksPlaylist, dbClearPlaylist, dbGetTopTracksURI, dbGetTracksPlaylist
 import logging
 import time
+
+# SQLAlchemy Imports
 from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
+
+# Local Imports
+from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
+                          refreshToken)
+from db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
+                        dbGetTopTracksURI, dbGetTracksPlaylist)
+from main import Base, Session
+from user_operations import User
+
 
 def createPlaylist(session, playlist_name):
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
