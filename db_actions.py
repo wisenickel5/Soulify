@@ -1,5 +1,10 @@
 import requests
 
+"""
+access_token - the unique key from authorization used to access the payload data
+playlist_id - the identification number for an existing playlist
+uri_list - a collection of uris in strings 
+"""
 def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
@@ -17,6 +22,10 @@ def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
 	else:
 		return None
 
+
+"""
+limit - the maximum number of tracks per request to avoid overloading the server
+"""
 def dbGetTracksPlaylist(access_token, playlist_id, limit=100):
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
@@ -60,6 +69,9 @@ def dbClearPlaylist(access_token, playlist_id):
 	else:
 		return None
 
+"""
+time - short_term, medium_term, or long_term
+"""
 def dbGetTopTracksURI(access_token, time, limit=25):
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
