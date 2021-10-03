@@ -1,9 +1,17 @@
+import logging
+import time
+
+# SQLAlchemy Imports
+from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
+
+# Local Imports
+from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
+                          refreshToken)
+from db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
+                        dbGetTopTracksURI, dbGetTracksPlaylist)
 from main import Base, Session
 from user_operations import User
-from authenticate import refreshToken, makeGetRequest, makePostRequest
-from db_actions import dbAddTracksPlaylist, dbClearPlaylist, dbGetTopTracksURI, dbGetTracksPlaylist
-import logging
-from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
+
 
 def createPlaylist(session, playlist_name):
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
@@ -194,3 +202,102 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 		rec_track_uri.append(track['uri'])
 
 	return rec_track_uri
+
+def shuffle(session, device, is_shuffle=True):
+	url = 'https://api.spotify.com/v1/me/player/shuffle'
+	params = {'state': is_shuffle, 'device_id': device}
+	payload = makePutRequest(session, url, params)
+	return payload
+
+def startPlayback(session, device):
+	url = 'https://api.spotify.com/v1/me/player/play'
+	params = {'device_id': device}
+	payload = makePutRequest(session, url, params)
+	return payload
+
+def startPlaybackContext(session, playlist, device):
+	url = 'https://api.spotify.com/v1/me/player/play'
+	params = {'device_id': device}
+	data = "{\"context_uri\":\"" + playlist + "\",\"offset\":{\"position\":0},\"position_ms\":0}"
+	payload = makePutRequest(session, url, params, data)
+	return payload
+
+
+def pausePlayback(session):
+	url = 'https://api.spotify.com/v1/me/player/pause'
+	payload = makePutRequest(session, url)
+	return payload
+
+def skipTrack(session):
+	url = 'https://api.spotify.com/v1/me/player/next'
+	data = {}
+	payload = makePostRequest(session, url, data)
+	return payload
+
+
+def getTrack(session):
+	url = 'https://api.spotify.com/v1/me/player/currently-playing'
+	payload = makeGetRequest(session, url)
+
+	if payload == None:
+		return None
+
+	# check to make sure the newest track is being grabbed (progress must be under 5000ms)
+	if payload['progress_ms'] != None and payload['progress_ms'] > 5000:
+		time.sleep(0.2)
+		payload = makeGetRequest(session, url)
+
+		if payload == None:
+			return None
+
+	name = payload['item']['name']
+	img = payload['item']['album']['images'][0]['url']
+
+	return {'name': name, 'img': img}
+
+def getTrackAfterResume(session):
+	url = 'https://api.spotify.com/v1/me/player/currently-playing'
+	payload = makeGetRequest(session, url)
+
+	if payload == None :
+		return None
+
+	name = payload['item']['name']
+	img = payload['item']['album']['images'][0]['url']
+
+	return {'name': name, 'img': img}
+
+def searchSpotify(session, search, limit=4):
+	url = 'https://api.spotify.com/v1/search'
+	params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
+	payload = makeGetRequest(session, url, params)
+
+	if payload == None:
+		return None
+
+	# response includes both artist and track names
+	results = []
+	for item in payload['artists']['items']:
+
+		# append 'a:' to artist URIs so artists and tracks can be distinguished 
+		results.append([item['name'], 'a:' + item['id'], item['popularity']])
+
+	for item in payload['tracks']['items']:
+
+		# track names will include both the name of the track and all artists
+		full_name = item['name'] + " - "
+		for artist in item['artists']:
+			full_name += artist['name'] + ", "
+
+		# append 't:' to track URIs so tracks and artists can be distinguished 
+		results.append([full_name[0:-2], 't:' + item['id'], item['popularity']])
+
+
+	# sort them by popularity (highest first)
+	results.sort(key=lambda x: int(x[2]), reverse=True)
+
+	results_json = []
+	for item in results:
+		results_json.append({'label': item[0], 'value': item[1]})
+
+	return results_json

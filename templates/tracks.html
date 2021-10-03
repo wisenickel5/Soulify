@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}TopTracks{% endblock %}
+
+{% block head %}
+	{{ super() }}
+
+	<script src="{{ url_for('static', filename='js/tracks.js') }}"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="py-5">
+    <div class="container">
+      <div class="row page-info">
+      	<div class="col-12 col-lg-4">
+      		<h1>Top Tracks</h1>
+      	</div>
+      	<div class="col-12 col-lg-8">
+      		<p>We curate your most listened to tracks over the last month, 6 months, and all-time. With the click of a button you can create a Spotify playlist that contains all of these tracks. We will automatically update your playlist to keep it up to date with your top tracks.</p>
+      	</div>
+      </div>
+      <div class="row">
+      	<div class="col-12 col-lg-4">
+	      <div class="form-content">
+	        <ul class="form-list">
+	          <li class="form-header">
+	          	<h1>Last Month</h1>
+	          </li>
+	          <li class="form-line">
+	            <div class="form-box">
+	              <div class="form-scroll">
+	                <div id="short">
+	                  {% for track in track_ids[0] %}
+	                    <div>
+	                      <iframe class="iframe-track" src="https://open.spotify.com/embed/track/{{ track }}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+	                    </div>
+	                  {% endfor %}
+	                </div>
+	              </div>
+	            </div>
+	          </li>
+	          <li class="form-submit">
+	            <button type="button" class="btn btn-default form-button" data-toggle="modal" data-target="#saveModal">
+	              <i class="fas fa-clipboard-check"></i>
+	              <p>Save Playlist to Spotify</p>
+	            </button>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+
+	    <div class="col-12 col-lg-4">
+	      <div class="form-content">
+	        <ul class="form-list">
+	          <li class="form-header">
+	          	<h1>6 Months</h1>
+	          </li>
+	          <li class="form-line">
+	            <div class="form-box">
+	              <div class="form-scroll">
+	                <div id="medium">
+	                  {% for track in track_ids[1] %}
+	                    <div>
+	                      <iframe class="iframe-track" src="https://open.spotify.com/embed/track/{{ track }}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+	                    </div>
+	                  {% endfor %}
+	                </div>
+	              </div>
+	            </div>
+	          </li>
+	          <li class="form-submit">
+	            <button type="button" class="btn btn-default form-button" data-toggle="modal" data-target="#saveModal">
+	              <i class="fas fa-clipboard-check"></i>
+	              <p>Save Playlist to Spotify</p>
+	            </button>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+
+	    <div class="col-12 col-lg-4">
+	      <div class="form-content">
+	        <ul class="form-list">
+	          <li class="form-header">
+	          	<h1>All-Time</h1>
+	          </li>
+	          <li class="form-line">
+	            <div class="form-box">
+	              <div class="form-scroll">
+	                <div id="long">
+	                  {% for track in track_ids[2] %}
+	                    <div>
+	                      <iframe class="iframe-track" src="https://open.spotify.com/embed/track/{{ track }}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+	                    </div>
+	                  {% endfor %}
+	                </div>
+	              </div>
+	            </div>
+	          </li>
+	          <li class="form-submit">
+	            <button type="button" class="btn btn-default form-button" data-toggle="modal" data-target="#saveModal">
+	              <i class="fas fa-clipboard-check"></i>
+	              <p>Save Playlist to Spotify</p>
+	            </button>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+      </div>
+
+    <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="save_modal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-left m-2">
+          	    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true"><i class="far fa-times-circle"></i></span>
+        		</button>
+            <form class="p-4" id="playlistForm">
+            	<h1 class="modal-title text-center">Get your Top Tracks!</h1>
+            	<p class="modal-info">DiscoverDaily will create a Spotify playlist with your most played tracks for the selected time period.</p>
+            	<div class="form-group">
+            		<div class="row ml-2 mb-4">
+            			<div class="col-sm-4 my-auto">
+	               			<input type="checkbox" class="form-check-input" name="short_term" id="shortTerm">
+	               			<label class="form-check-label" for="shortTerm">Last Month</label>
+	               		</div>
+	               		<div class="col-sm-8">
+	               			<div class="form-text">
+	            				<label for="shortTermName">Playlist Name</label>
+	    						<input type="text" class="form-control" name="short_term_name" id="shortTermName" aria-describedby="shortPlaylistName" value="Top Tracks Last Month">
+	            			</div>
+	            		</div>
+            		</div>
+            	</div>
+
+            	<div class="form-group">
+            		<div class="row ml-2 mb-4">
+            			<div class="col-sm-4 my-auto">
+	               			<input type="checkbox" class="form-check-input" name="medium_term" id="mediumTerm">
+	               			<label class="form-check-label" for="mediumTerm">6 Months</label>
+	               		</div>
+	               		<div class="col-sm-8">
+	               			<div class="form-text">
+	            				<label for="mediumTermName">Playlist Name</label>
+	    						<input type="text" class="form-control" name="medium_term_name" id="mediumTermName" aria-describedby="mediumPlaylistName" value="Top Tracks 6 Months">
+	            			</div>
+	            		</div>
+            		</div>
+            	</div>
+
+            	<div class="form-group">
+            		<div class="row ml-2 mb-4">
+            			<div class="col-sm-4 my-auto">
+	               			<input type="checkbox" class="form-check-input" name="long_term" id="longTerm">
+	               			<label class="form-check-label" for="longTerm">All-Time</label>
+	               		</div>
+	               		<div class="col-sm-8">
+	               			<div class="form-text">
+	            				<label for="longTermName">Playlist Name</label>
+	    						<input type="text" class="form-control" name="long_term_name" id="longTermName" aria-describedby="longPlaylistName" value="Top Tracks All Time">
+	            			</div>
+	            		</div>
+            		</div>
+            	</div>
+
+
+            	<p class="modal-info">Your favorite music is always changing. Would you like Discover Daily to automatically sync and update your Most Played playlist(s)?</p>
+                <div class="form-group">
+            		<div class="form-check mb-4 text-center">
+               			<input type="checkbox" class="form-check-input" name="auto_update" id="autoUpdates">
+               			<label class="form-check-label" for="autoUpdates">Automatic Updates</label>
+            		</div>
+            	</div>
+
+				<button class="btn btn-info btn-block" id="createBtn" type="button" data-dismiss="modal">Create Playlist</button>   	
+
+            </form>
+          </div>
+          <div class="modal-right">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
