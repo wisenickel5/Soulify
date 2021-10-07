@@ -133,3 +133,5 @@ dmypy.json
 Pipfile
 
 Pipfile.lock
+
+.vs/Soulify/xs/UserPrefs.xml
