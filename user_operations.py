@@ -17,6 +17,15 @@ class User(Base):
 		return '<User {}>'.format(self.username)
 
 def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=None, playlist_id_long=None):
+	"""[summary]
+
+	Args:
+		username ([type]): [description]
+		refresh_token ([type]): [description]
+		playlist_id_short ([type], optional): [description]. Defaults to None.
+		playlist_id_medium ([type], optional): [description]. Defaults to None.
+		playlist_id_long ([type], optional): [description]. Defaults to None.
+	"""
 	session = Session()
 	id_exists = session.query(User.id).filter_by(username=username).scalar()
 
