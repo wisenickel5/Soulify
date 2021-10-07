@@ -6,9 +6,11 @@ import sqlalchemy
 
 app = Flask(__name__)
 app.config.from_object(config)
+app.secret_key = app.config['CLIENT_SECRET']
+
 
 # connect to local instance of mysqlDB server
-engine = sqlalchemy.create_engine('mysql+pymysql://scott:tiger@localhost/foo')
+engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=True)
 
 # create session and base declarative
 from sqlalchemy.orm import sessionmaker
@@ -22,7 +24,7 @@ from user_operations import User
 Base.metadata.create_all(engine)
 
 # schedule updates for the TopTracks playlists
-from user_operations import updatePlaylists
+from services import updatePlaylists
 scheduler = BackgroundScheduler()
 scheduler.add_job(updatePlaylists, trigger='interval', days=1)
 scheduler.start()
