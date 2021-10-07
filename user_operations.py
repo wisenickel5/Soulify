@@ -52,6 +52,14 @@ def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=
 	session.close()
 
 def getUserInformation(session):
+	"""[summary]
+
+	Args:
+		session ([type]): [description]
+
+	Returns:
+		[type]: [description]
+	"""
 	url = 'https://api.spotify.com/v1/me'
 	payload = makeGetRequest(session, url)
 
