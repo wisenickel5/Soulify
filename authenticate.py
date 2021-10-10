@@ -68,7 +68,7 @@ def checkTokenStatus(session):
 		string: Success log
 	"""
 	payload = None
-	
+
 	if time.time() > session['token_expiration']:
 		payload = refreshToken(session['refresh_token'])
 
@@ -116,15 +116,21 @@ def makeGetRequest(session, url, params={}):
 	Returns:
 		dictionary: JSON Response
 	"""
-	headers = {'Authorization': "Bearer {}".format(session['token'])}
-	response = requests.get(url, headers=headers, params=params)
+	headers = { 'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': f"Bearer {session['token']}" }
+	get_response = requests.get(url, headers=headers, params=params)
 
-	if response.status_code == 200:
-		return response.json()
-	elif response.status_code == 401 and checkTokenStatus(session) != None:
+	# Log GET Response output in terminal
+	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
+	app.logger.info(f'\n\nGET Response Formatted -> {get_response}\n\n')
+
+	if get_response.status_code == 200:
+		return get_response.json()
+	elif get_response.status_code == 401 and checkTokenStatus(session) != None:
 		return makeGetRequest(session, url, params)
 	else:
-		logging.error('makeGetRequests:' + str(response.status_code))
+		logging.error('makeGetRequests:' + str(get_response.status_code))
 		return None
 
 def makePutRequest(session, url, params={}, data={}):
