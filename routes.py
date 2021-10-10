@@ -15,9 +15,6 @@ from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
 from user_operations import (addUser, getUserDevices, getUserInformation,
                              getUserPlaylists)
 
-
-
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -25,7 +22,6 @@ def index():
 	This connects the hompage to a url.
 	"""
 	return render_template('index.html')
-
 
 @app.route('/authorize')
 def authorize():
@@ -35,11 +31,8 @@ def authorize():
 	page. 
 	"""
 	client_id = app.config['CLIENT_ID']
-	client_secret = app.config['CLIENT_SECRET']
 	redirect_uri = app.config['REDIRECT_URI']
 	scope = app.config['SCOPE']
-
-
 
 	# state key used to protect against cross-site forgery attacks
 	state_key = createStateKey(15)
@@ -47,19 +40,18 @@ def authorize():
 
 	# redirect user to Spotify authorization page
 	authorize_url = 'https://accounts.spotify.com/en/authorize?'
-	parameters = 'response_type=code&client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&scope=' + scope + '&state=' + state_key
+	parameters = 'client_id=' + client_id + '&response_type=code' + '&redirect_uri=' + redirect_uri + '&scope=' + scope + '&state=' + state_key
+	app.logger.info(authorize_url + parameters)
 	response = make_response(redirect(authorize_url + parameters))
 
 	return response
-	
 
-
-	
 @app.route('/callback')
 def callback():
 	"""
-	This feature activates when the new user accesses their account through 
-	the webpage and it takes them to the page they wanted to get to.
+	Called after a new user has authorized the application through the Spotift API page.
+	Stores user information in a session and redirects user back to the page they initally
+	attempted to visit.
 	"""
 	# make sure the response came from Spotify
 	if request.args.get('state') != session['state_key']:
@@ -72,6 +64,7 @@ def callback():
 
 		# get access token to make requests on behalf of the user
 		payload = getToken(code)
+		app.logger.info(f'(Callback) Payload: {payload}')
 		if payload != None:
 			session['token'] = payload[0]
 			session['refresh_token'] = payload[1]
@@ -85,7 +78,6 @@ def callback():
 
 	return redirect(session['previous_url'])
 
-	
 @app.route('/information',  methods=['GET'])
 def information():
 	"""
@@ -93,8 +85,7 @@ def information():
 	features on the app.
 	"""
 	return render_template('information.html')
-	
-	
+
 @app.route('/tracks',  methods=['GET'])
 def tracks():
 	"""
@@ -291,7 +282,6 @@ def autocomplete():
 	results = searchSpotify(session, search)
 
 	return jsonify(matching_results=results)
-
 
 @app.route('/playback/skip')
 def playbackSkip():

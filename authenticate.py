@@ -1,9 +1,12 @@
+from requests.models import codes
 from main import app
 import requests
 import string as string
 import time
 import random as rand
 import logging
+import base64
+import json
 
 def createStateKey(size):
 	"""Provides a state key for authorization request. To prevent forgery attacks, the state key
@@ -18,6 +21,17 @@ def createStateKey(size):
 	"""
 	return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
+def base64_encode(client_id, client_secret):
+	"""Return a base64 encoded string that contains the Client ID & Client Secret Key
+
+	Args:
+		client_id (str)
+		client_secret (str)
+	"""
+	encodedData = base64.b64encode(bytes(f"{client_id}:{client_secret}", "ISO-8859-1")).decode("ascii")
+	authorization_header_string = f"{encodedData}"
+	return (authorization_header_string)
+
 def getToken(code):
 	"""Requests an access token from Spotify API. This function is only called if
 	the current user does not have a refresh token.
@@ -29,17 +43,17 @@ def getToken(code):
 		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
 	"""
 	token_url = 'https://accounts.spotify.com/api/token'
-	authorization = app.config['AUTHORIZATION']
+	auth_str = '{}:{}'.format(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
+	encoded_auth_str = base64.urlsafe_b64encode(auth_str.encode()).decode()
 	redirect_uri = app.config['REDIRECT_URI']
 
-	headers = { 'Authorization': authorization,
-			'Accept': 'Soulify/json',
-			'Content-Type': 'application/x-www-form-urlencoded'}
-	body = {'code': code, 'redirect_uri': redirect_uri,
-			'grant-type': 'authorization_code'}
+	app.logger.info(f"\n\nCurrent code {code}")
+
+	headers = { 'Authorization': encoded_auth_str, 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }
+	body = {'code': code, 'redirect_uri': redirect_uri, 'grant_type': 'authorization_code'}
 
 	post_response = requests.post(token_url, headers=headers, data=body)
-
+	app.logger.info(f'\n\nWisenickel:(getToken) Post Response Status Code -> {post_response.status_code} \n  Post Response Headers -> {post_response.headers}\nPost Response Formatted -> {post_response.json()}')
 	if post_response.status_code == 200:
 		pr = post_response.json()
 		return pr['access_token'], pr['refresh_token'], pr['expires_in']
