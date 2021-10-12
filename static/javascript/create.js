@@ -35,7 +35,6 @@ $(document).ready(function() {
         } else {
             createPlaylist(payload);
         }
-
     });
 
     // Get autocomplete data from endpoint
@@ -45,13 +44,11 @@ $(document).ready(function() {
                 $.getJSON('/autocomplete',{
                     q: request.term,
                 }, function(data) {
-                    // response([{label: "Rain On Me (with Ariana Grande) - Lady Gaga, Ariana Grande", value: "here"}])
-                    response(data.matching_results); // matching_results from jsonify
+                    response(data.matching_results);
                 });
             },
             minLength: 2,
             select: function(event, ui) {
-                // event.preventDefault();
                 $(this).val(''); 
                 createSelected(ui.item.label, ui.item.value);
                 return false;

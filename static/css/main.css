@@ -6,15 +6,8 @@ body {
   padding: 0;
   display: block;
   color: #000!important;
-/*  background: linear-gradient(349deg, rgba(45, 45, 45, 1) 15%, rgba(119, 44, 115, 1) 55%, rgba(84, 118, 255, 1) 77%) fixed;
-*/
-  background: linear-gradient(349deg, rgba(45, 45, 45, 1) 15%, rgba(159, 76, 154,1) 55%, rgba(85, 135, 240, 1) 77%);
-
+  background: linear-gradient(349deg, rgba(45, 45, 45, 1) 15%, rgba(159, 76, 154,1) 55%, rgba(85, 135, 240, 1) 77%)!important;
 }
-
-/*ul {
-	flex-direction: row!important;
-}*/
 
 div {
 	display: block;
@@ -77,39 +70,9 @@ li.nav-item {
   line-height: 45px;
 }
 
-/*.top-navbar {
-	overflow: hidden;
-	background-color: white;
-	position: sticky!important;
-	top: 0;
-	width: 100%;
-	z-index: 1041;
-	border-bottom-style: solid;
-	border-width: 2px;
-	border-color: black;
-	font-weight: 600;
-}
-.top-navbar p, i{
-	color: black;
-}
-.top-navbar p:hover, i:hover {
-	color: gray;
-}
-.top-navbar-side p{
-  	margin: 0;
-}
-.top-navbar-mid a{
-	margin-right: 20px;
-}
-.horizontal-1 {
-    padding-right: 0.5rem!important;
-    padding-left: 0.5rem!important;
-}*/
-
 .icon-fa {
 	font-size: 25px; 
 }
-
 
 .jumbotron {
   padding: 6rem 1rem!important;
@@ -117,7 +80,7 @@ li.nav-item {
   background-image: linear-gradient(
       rgba(84, 118, 255, 0.9), 
       rgba(119, 44, 115, 0.8)
-    ), url("header.jpg");
+    );
   background-size: cover;
   color: #fff !important;
   font-family: Montserrat,sans-serif;
