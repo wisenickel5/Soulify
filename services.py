@@ -1,22 +1,51 @@
-from main import Base, Session
-from user_operations import User
-from authenticate import refreshToken, makeGetRequest, makePostRequest, makePutRequest
-from db_actions import dbAddTracksPlaylist, dbClearPlaylist, dbGetTopTracksURI, dbGetTracksPlaylist
 import logging
 import time
+
+# SQLAlchemy Imports
 from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
 
-def createPlaylist(session, playlist_name):
-	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
-	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Discover Daily\"}"
-	payload = makePostRequest(session, url, data)
+# Local Imports
+from main import app
+from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
+                          refreshToken)
+from db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
+                        dbGetTopTracksURI, dbGetTracksPlaylist)
+from main import Base, Session
+from user_operations import User
 
+
+def createPlaylist(session, playlist_name):
+	"""Creates a group of a songs (playlist) with the parameter session and pulls the 
+	user inputted playlist name
+
+
+	Args:
+		session (Session): Flask Session Object
+		playlist_name (String): Name of the playlist which is being called for
+
+	Returns:
+		Tuple : 
+	"""
+	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
+	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\"}"
+	payload = makePostRequest(session, url, data)
+	app.logger.info(f'(createPlaylist) Payload: {payload}')
 	if payload == None:
 		return None
 
 	return payload['id'], payload['uri']
 
 def updatePlaylists():
+	"""Function to literally update playlists. Authorization with spotify is checked. Authorization 
+	with user is also checked to see if playlist is deleted or not. 
+
+	Args:
+		No arguments 
+
+
+	Returns: 
+		No returns. (Checks throughout code for authorization and playlist deleted/updated)
+	"""
 	session = Session()
 
 	# attempt to update each user's playlists
@@ -71,6 +100,16 @@ def updatePlaylists():
 	logging.info('Updated TopTracks Playlists')
 
 def addTracksPlaylist(session, playlist_id, uri_list):
+	"""Using the spotify API to add sigular tracks to a playlist. 
+
+	Args:
+		session (Session): Flask Session Object
+		playlist_id (int): ID for the playlist for spotify API to function 
+		uri_list (): [description] **Will come back to
+
+	Return: 
+		No return. 
+	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
 	uri_str = ""
@@ -83,6 +122,18 @@ def addTracksPlaylist(session, playlist_id, uri_list):
 	return
 
 def getTracksPlaylist(session, playlist_id, limit=100):
+	"""Get function which uses the spotify API along as the playlist ID in order to get all the 
+	tracks from the playlist.
+
+
+	Args:
+		session (Session): Flask Session Object
+		playlist_id (int): ID for the playlist for spotify API to function
+		limit (int, optional): The literal limit of songs per tracks on the playlist. Defaults to 100.
+
+	Returns:
+		[type]: Track uri **Come back to this
+	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
 	offset = 0
@@ -106,6 +157,15 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 	return track_uri
 
 def getAllTopTracks(session, limit=10):
+	"""Creates a list of tracks which are in the top 10 in the spotify API list. 
+
+	Args:
+		session (Session): Flask Session Object
+		limit (int, optional): Number of songs per top tracks. Defaults to 10. **
+
+	Returns:
+		int: Returns the id of the top 10 tracks.
+	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	track_ids = []
 	time_range = ['short_term', 'medium_term', 'long_term']
@@ -127,6 +187,16 @@ def getAllTopTracks(session, limit=10):
 	return track_ids
 
 def getTopTracksID(session, time, limit=25):
+	"""Creates a list of tracks which are top 25 on the spotify API list.
+
+	Args:
+		session (Session): Flask Session Object
+		time (int): The range of time per song. 
+		limit (int, optional): Number of tracks per playlist. Defaults to 25.
+
+	Returns:
+		int: Returns the id of the top 10 tracks.
+	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
 	payload = makeGetRequest(session, url, params)
@@ -140,7 +210,17 @@ def getTopTracksID(session, time, limit=25):
 
 	return track_ids
 
-def getTopTracksURI(session, time, limit=25):
+def getTopTracksURI(session, time, limit=25):  
+	"""[summary]
+
+	Args:
+		session (Session): Flask Session Object
+		time (int): The range of time per song. 
+		limit (int, optional): [description]. Defaults to 25.
+
+	Returns:
+		[type]: [description]
+	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
 	payload = makeGetRequest(session, url, params)
@@ -155,6 +235,16 @@ def getTopTracksURI(session, time, limit=25):
 	return track_uri
 
 def getTopArtists(session, time, limit=10):
+	"""[summary]
+
+	Args:
+		session (Session): Flask Session Object
+		time (int): The range of time per song. 
+		limit (int, optional): Gets the top 10 artists onto the list.. Defaults to 10. **
+
+	Returns:
+		int: Returns the id of the top 10 artists.
+	"""
 	url = 'https://api.spotify.com/v1/me/top/artists'
 	params = {'limit': limit, 'time_range': time}
 	payload = makeGetRequest(session, url, params)
@@ -169,6 +259,17 @@ def getTopArtists(session, time, limit=10):
 	return artist_ids
 
 def getRecommendedTracks(session, search, tuneable_dict, limit=25):
+	"""This call pulls the top 25 tracks which are directed to a playlist. 
+
+	Args:
+		session (Session): Flask Session Object
+		search ([type]): [description]
+		tuneable_dict (dict): 
+		limit (int, optional): Number of tracks which the call will pull. Defaults to 25.
+
+	Returns:
+		int (?): rec_track_uri
+	"""
 	track_ids = ""
 	artist_ids = ""
 	for item in search:
@@ -197,31 +298,76 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 	return rec_track_uri
 
 def shuffle(session, device, is_shuffle=True):
+	"""Shuffle call. Shuffles all songs on the platform.
+
+	Args:
+		session (Session): Flask Session Object
+		device (int): Device ID of the user device. 
+		is_shuffle (bool, optional): Checks if the device's playlist is shuffled. Defaults to True.
+
+	Returns:
+		tuple : Session, url, params
+	"""
 	url = 'https://api.spotify.com/v1/me/player/shuffle'
 	params = {'state': is_shuffle, 'device_id': device}
 	payload = makePutRequest(session, url, params)
 	return payload
 
 def startPlayback(session, device):
+	"""Starts the playback of the session on a user device.
+
+	Args:
+		session (Session): Flask Session Object
+		device (int): Device ID of the user device.
+
+	Returns:
+		tuple:  Session, url, params
+	"""
 	url = 'https://api.spotify.com/v1/me/player/play'
 	params = {'device_id': device}
 	payload = makePutRequest(session, url, params)
 	return payload
 
 def startPlaybackContext(session, playlist, device):
+	"""Starts playback from the playlist on a user device. 
+
+	Args:
+		session (Session): Flask Session Object
+		playlist (int): Selected user playlist
+		device (int): Device ID of the user device.
+
+	Returns:
+		tuple:  Session, url, params
+	"""
 	url = 'https://api.spotify.com/v1/me/player/play'
 	params = {'device_id': device}
 	data = "{\"context_uri\":\"" + playlist + "\",\"offset\":{\"position\":0},\"position_ms\":0}"
 	payload = makePutRequest(session, url, params, data)
 	return payload
 
-
+ 
 def pausePlayback(session):
+	"""Stops the user session from playing tracks. 
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		Tuple: session, url
+	"""
 	url = 'https://api.spotify.com/v1/me/player/pause'
 	payload = makePutRequest(session, url)
 	return payload
 
 def skipTrack(session):
+	"""Skips a track.
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		Tuple: session, url, data
+	"""
 	url = 'https://api.spotify.com/v1/me/player/next'
 	data = {}
 	payload = makePostRequest(session, url, data)
@@ -229,6 +375,14 @@ def skipTrack(session):
 
 
 def getTrack(session):
+	"""Call to get the track ID from the user session. 
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		tuple: name, img 
+	"""
 	url = 'https://api.spotify.com/v1/me/player/currently-playing'
 	payload = makeGetRequest(session, url)
 
@@ -249,6 +403,14 @@ def getTrack(session):
 	return {'name': name, 'img': img}
 
 def getTrackAfterResume(session):
+	"""Gets the track after resuming the user session.
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+			tuple: name, img 
+	"""
 	url = 'https://api.spotify.com/v1/me/player/currently-playing'
 	payload = makeGetRequest(session, url)
 
@@ -261,6 +423,16 @@ def getTrackAfterResume(session):
 	return {'name': name, 'img': img}
 
 def searchSpotify(session, search, limit=4):
+	"""Searches the entire spotify library using the spotify API call
+
+	Args:
+		session (Session): Flask Session Object
+		search ([type]): [description]
+		limit (int, optional): Limit of searches shown in the search bar. Defaults to 4.
+
+	Returns:
+		Tuple: label, item
+	"""
 	url = 'https://api.spotify.com/v1/search'
 	params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
 	payload = makeGetRequest(session, url, params)
