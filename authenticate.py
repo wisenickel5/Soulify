@@ -123,7 +123,7 @@ def makeGetRequest(session, url, params={}):
 
 	# Log GET Response output in terminal
 	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
-	app.logger.info(f'\n\nGET Response Formatted -> {get_response}\n\n')
+	app.logger.info(f'\n\nGET Response Body -> {str(get_response.request.body)}\n\n')
 
 	if get_response.status_code == 200:
 		return get_response.json()
