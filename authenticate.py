@@ -1,4 +1,5 @@
 from requests.models import codes
+from werkzeug.wrappers import response
 from main import app
 import requests
 import string as string
@@ -120,10 +121,10 @@ def makeGetRequest(session, url, params={}):
 				'Content-Type': 'application/json',
 				'Authorization': f"Bearer {session['token']}" }
 	get_response = requests.get(url, headers=headers, params=params)
+	response_json = get_response.json()
 
 	# Log GET Response output in terminal
 	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
-	app.logger.info(f'\n\nGET Response Body -> {str(get_response.request.body)}\n\n')
 
 	if get_response.status_code == 200:
 		return get_response.json()

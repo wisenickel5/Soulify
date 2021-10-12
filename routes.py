@@ -64,7 +64,7 @@ def callback():
 
 		# get access token to make requests on behalf of the user
 		payload = getToken(code)
-		app.logger.info(f'(Callback) Payload: {payload}')
+		#app.logger.info(f'(Callback) Payload: {payload}')
 		if payload != None:
 			session['token'] = payload[0]
 			session['refresh_token'] = payload[1]
