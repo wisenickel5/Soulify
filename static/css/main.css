@@ -1,0 +1,397 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap');
+
+body {
+  font-family: "Montserrat", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  display: block;
+  color: #000!important;
+  background: linear-gradient(349deg, rgba(45, 45, 45, 1) 15%, rgba(159, 76, 154,1) 55%, rgba(85, 135, 240, 1) 77%)!important;
+}
+
+div {
+	display: block;
+}
+
+*, :after, :before {
+    box-sizing: inherit;
+}
+
+i {
+	color: #000;
+}
+
+@media (min-width: 768px) {
+  .navbar-brand.logo{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+  }
+
+  .navbar {
+  	display: block!important;
+  }
+}
+
+@media (min-width: 300px) {
+  .navbar-brand.logo{
+    margin-left: 10px;
+  }
+}
+
+.nav-scheme {
+  overflow: hidden;
+  background-color: white;
+  position: sticky!important;
+  top: 0;
+  width: 100%;
+  z-index: 1041;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-color: black;
+  font-weight: 600;
+}
+
+.nav-scheme p, i {
+  color: black;
+}
+
+.nav-scheme p:hover, i:hover {
+  color: gray;
+}
+
+ul.navbar-nav {
+  z-index: 1043;
+}
+
+li.nav-item {
+  height: 65px;
+  line-height: 45px;
+}
+
+.icon-fa {
+	font-size: 25px; 
+}
+
+.jumbotron {
+  padding: 6rem 1rem!important;
+  margin-bottom: 0!important;
+  background-image: linear-gradient(
+      rgba(84, 118, 255, 0.9), 
+      rgba(119, 44, 115, 0.8)
+    );
+  background-size: cover;
+  color: #fff !important;
+  font-family: Montserrat,sans-serif;
+  line-height: 1.125;
+}
+
+@media (min-width: 768px) {
+  .jumbotron {
+    padding: 8rem 2rem!important;
+  }
+
+  .top-navbar-mid a{
+	margin-right: 80px;
+  }
+
+  .horizontal-1 {
+    padding-right: 1rem!important;
+    padding-left: 1rem!important;
+  }
+
+}
+
+.jumbotron p:last-child {
+  margin-bottom: 0;
+}
+
+.site-info {
+  color: #fff;
+  font-family: Montserrat,sans-serif;
+  padding-bottom: 30px;
+}
+
+.site-info h1 {
+  font-size: 4em;
+  font-weight: 700;
+}
+
+.site-info h3 {
+  font-size: 2em;
+  font-weight: 400;
+}
+
+.page-info {
+	color: #fff;
+	font-family: Montserrat,sans-serif;
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 30px;
+}
+
+.page-info p {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.page-info h1 {
+  font-size: 4em;
+  font-weight: 700;
+}
+
+.page-info h3 {
+  font-size: 2em;
+  font-weight: 400;
+}
+
+.jumbotron .container {
+  max-width: 45rem;
+}
+
+footer {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  color: #000!important;
+  background-color: #f8f9fa!important;
+  border-top: 2px solid black;
+}
+
+footer p {
+  margin-bottom: .25rem;
+}
+
+.blog-footer p:last-child {
+  margin-bottom: 0;
+}
+
+.card-center {
+    font-size: 1.125rem;
+    text-anchor: middle;
+}
+
+.card-center rect:hover{
+	fill: url(#gradient1);
+}
+
+.iframe-track {
+	position: relative;
+  height: 80px;
+  width: 100%; 
+}
+
+.form-content{
+  margin: 0px auto;
+  padding-top: 0px;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.form-list{
+  padding: 0px;
+  list-style: none;
+  margin: 0px;
+  position: relative;
+  border: 3px solid white;
+  border-radius: 15px;
+  background: rgba(239, 239, 239, 0.5);
+}
+
+.form-line{
+  padding: 0px 0px 0px 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.form-header{
+  text-align: center;
+  border-bottom: 2px solid white;
+  color: #fff!important;
+}
+
+.form-box{
+  padding: 0px;
+}
+
+.form-scroll{
+  overflow-y: scroll;
+  width: 100%;
+  padding: 10px;
+  height: 400px;
+}
+
+.form-submit{
+  text-align: center;
+  width: 100%;
+  padding: 15px 40px 15px 40px;
+  border-top: 2px solid white;
+}
+
+.form-button{
+  padding: 8px 17px;
+  cursor: pointer;
+  border-radius: 3px 3px;
+  background-color: #E8E8E8!important;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  margin: 5px;
+}
+
+#saveModal {
+	z-index: 1042;
+}
+
+.modal-content {
+  display: flex;
+  max-width: 720px;
+  width: 100%;
+  border-radius: 2.0rem!important;
+  overflow: hidden;
+  position: absolute;
+  margin-top: 100px;
+}
+
+.modal-left {
+  background: #fff;
+}
+
+.modal-right {
+  flex: 2;
+  background: #000;
+}
+
+.modal-title {
+  font-size: 26px;
+  margin: 0;
+  font-weight: 700;
+  border-bottom: 2px solid black;
+}
+
+.modal-info {
+  margin: 6px 0 30px 0;
+}
+
+
+
+/*****************************************************/
+
+.clock {
+  padding: 0px;
+  list-style: none;
+  margin: 0px;
+  position: relative;
+  border: 3px solid white;
+  border-radius: 15px;
+  background-image: url("album_placeholder.JPG");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.countdown-square {
+	background: rgba(10, 10, 10, 0.95);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.countdown-square span{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.countdown-square-big {
+    width: 200px;
+    height: 150px;
+}
+
+.countdown-square-big span{
+  font-size: 6rem;
+}
+
+@media (max-width: 466px) {
+.countdown-square-big {
+    width: 120px;
+    height: 90px;
+	}
+
+.countdown-square-big span {
+    font-size: 3.0rem!important;
+	}
+}
+
+.countdown-square-small {
+    width: 100px;
+    height: 75px;
+    margin-top: 20px;
+}
+
+.countdown-square-small {
+	font-size: 1rem;
+}
+
+.equalize {
+	margin-bottom: 125px;
+}
+
+#currentName {
+	font-size: 2rem;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	background-color: rgba(10, 10, 10, 0.5);
+}
+
+.buttonOuter {
+	width:100%;
+    text-align: center;
+}
+
+.buttonInner {
+	display: inline-block;
+	width: 100px;
+}
+
+.slider-range {
+	width: calc(100% - (75px))!important;
+  	height: 10px!important;
+}
+
+.slider-value {
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  background: #2c3e50;
+  padding: 2px 10px;
+  margin-left: 8px;
+  width: 55px!important;
+  float: right;
+}
+
+.selected-search {
+	line-height: 38px;
+	font-size: 0.75rem!important;
+	width: calc(100% - (75px))!important;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.list-group-item {
+	padding: .1rem 1.25rem;
+}
+
+.center-parent {
+	text-align: center;
+}
+
+.center-child {
+	margin: auto;
+}
+
+.hyperlink-black {
+  color: #000;
+}
