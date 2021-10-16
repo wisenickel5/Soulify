@@ -24,7 +24,7 @@ def createPlaylist(session, playlist_name):
 		playlist_name (String): Name of the playlist which is being called for
 
 	Returns:
-		Tuple : 
+		Dictionary: id, uri
 	"""
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
 	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\"}"
@@ -132,7 +132,7 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 		limit (int, optional): The literal limit of songs per tracks on the playlist. Defaults to 100.
 
 	Returns:
-		[type]: Track uri **Come back to this
+		[type]: Track uri 
 	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
@@ -164,7 +164,7 @@ def getAllTopTracks(session, limit=10):
 		limit (int, optional): Number of songs per top tracks. Defaults to 10. **
 
 	Returns:
-		int: Returns the id of the top 10 tracks.
+		list [String]: Returns the id of the top 10 tracks.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	track_ids = []
@@ -195,7 +195,7 @@ def getTopTracksID(session, time, limit=25):
 		limit (int, optional): Number of tracks per playlist. Defaults to 25.
 
 	Returns:
-		int: Returns the id of the top 10 tracks.
+		list [String]: Returns the id of the top 10 tracks.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
@@ -219,7 +219,7 @@ def getTopTracksURI(session, time, limit=25):
 		limit (int, optional): [description]. Defaults to 25.
 
 	Returns:
-		[type]: [description]
+		
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
@@ -243,7 +243,7 @@ def getTopArtists(session, time, limit=10):
 		limit (int, optional): Gets the top 10 artists onto the list.. Defaults to 10. **
 
 	Returns:
-		int: Returns the id of the top 10 artists.
+		list [String]: Returns the id of the top 10 Artists.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/artists'
 	params = {'limit': limit, 'time_range': time}
@@ -409,7 +409,7 @@ def getTrackAfterResume(session):
 		session (Session): Flask Session Object
 
 	Returns:
-			tuple: name, img 
+			Dictionary: name, img 
 	"""
 	url = 'https://api.spotify.com/v1/me/player/currently-playing'
 	payload = makeGetRequest(session, url)
@@ -431,7 +431,7 @@ def searchSpotify(session, search, limit=4):
 		limit (int, optional): Limit of searches shown in the search bar. Defaults to 4.
 
 	Returns:
-		Tuple: label, item
+		dictionary: JSON Response
 	"""
 	url = 'https://api.spotify.com/v1/search'
 	params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}

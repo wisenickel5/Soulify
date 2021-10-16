@@ -121,7 +121,7 @@ def makeGetRequest(session, url, params={}):
 				'Content-Type': 'application/json',
 				'Authorization': f"Bearer {session['token']}" }
 	get_response = requests.get(url, headers=headers, params=params)
-	response_json = get_response.json()
+	#response_json = get_response.json()	
 
 	# Log GET Response output in terminal
 	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
