@@ -17,6 +17,20 @@ class User(Base):
 		return '<User {}>'.format(self.username)
 
 def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=None, playlist_id_long=None):
+	"""Function called when a user signs up for a new TopTracks playlist. If the user is new, 
+	then a new row is created with the appropriate column information. If the user already exists 
+	in the table, then only the playlist IDs are updated
+
+	Args:
+		username (string): the username that is store in the User table in the database
+		refresh_token (string): the refresh_token that is store in the User table in the database
+		playlist_id_short (string): The plalist_id that is stored in the User table in the database for new users 
+		playlist_id_medium (string): The plalist_id that is stored in the User table in the database for new users
+		playlist_id_long (string): The plalist_id that is stored in the User table in the database for new users
+
+	Returns:
+		str: username
+	"""
 	session = Session()
 	id_exists = session.query(User.id).filter_by(username=username).scalar()
 
@@ -43,13 +57,13 @@ def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=
 	session.close()
 
 def getUserInformation(session):
-	"""[summary]
+	"""Gets user information such as username, user ID, and user location
 
 	Args:
-		session ([type]): [description]
+		session (Session): Flask Session Object
 
 	Returns:
-		[type]: [description]
+		dict : JSON Response
 	"""
 	url = 'https://api.spotify.com/v1/me'
 	payload = makeGetRequest(session, url)
@@ -60,6 +74,17 @@ def getUserInformation(session):
 	return payload
 
 def getUserDevices(session):
+	"""Gets all of a user's available devices.
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		device_list:
+		string: name
+		Integer: ID primary key
+
+	"""
 	url = 'https://api.spotify.com/v1/me/player/devices'
 	payload = makeGetRequest(session, url)
 
@@ -76,6 +101,17 @@ def getUserDevices(session):
 	return device_list
 
 def getUserPlaylists(session, limit=20):
+	"""Gets all of a user playlists
+
+	Args:
+		session (Session): Flask Session Object
+		limit (int): [description]. Defaults to 20.
+
+	Returns:
+		list of playlist:
+		string: name
+		string: uri, identify a physical or logical resource 
+	"""
 	url = 'https://api.spotify.com/v1/me/playlists'
 	offset = 0
 	playlist = []
