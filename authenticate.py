@@ -1,9 +1,13 @@
+from requests.models import codes
+from werkzeug.wrappers import response
 from main import app
 import requests
 import string as string
 import time
 import random as rand
 import logging
+import base64
+import json
 
 def createStateKey(size):
 	"""Provides a state key for authorization request. To prevent forgery attacks, the state key
@@ -27,24 +31,31 @@ def getToken(code):
 
 	Returns:
 		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
-	"""
-	token_url = 'https://accounts.spotify.com/api/token'
-	authorization = app.config['AUTHORIZATION']
+	"""	
+	grant_type = app.config['GRANT_TYPE']
 	redirect_uri = app.config['REDIRECT_URI']
+	client_id = app.config['CLIENT_ID']
+	client_secret = app.config['CLIENT_SECRET']
+	token_url = app.config['TOKEN_URL']
+	request_body = {
+        "grant_type": grant_type,
+        "code": code,
+        "redirect_uri": redirect_uri,
+        "client_id": client_id,
+        "client_secret": client_secret,
+    }
+	post_request = requests.post(url=token_url, data=request_body)
+	p_response = post_request.json()
 
-	headers = { 'Authorization': authorization,
-			'Accept': 'Soulify/json',
-			'Content-Type': 'application/x-www-form-urlencoded'}
-	body = {'code': code, 'redirect_uri': redirect_uri,
-			'grant-type': 'authorization_code'}
+	# Log POST Response output in terminal
+	app.logger.info(f"\n\nCurrent code {code}")
+	app.logger.info(f'\n\nWisenickel:(getToken) Post Response Status Code -> {post_request.status_code}')
+	app.logger.info(f'\n\nPost Response Formatted -> {post_request}\n\n')
 
-	post_response = requests.post(token_url, headers=headers, data=body)
-
-	if post_response.status_code == 200:
-		pr = post_response.json()
-		return pr['access_token'], pr['refresh_token'], pr['expires_in']
+	if post_request.status_code == 200:
+		return p_response['access_token'], p_response['refresh_token'], p_response['expires_in']
 	else:
-		logging.error('getToken: ' + str(post_response.status_code))
+		logging.error('getToken: ' + str(post_request.status_code))
 		return None
 
 def checkTokenStatus(session):
@@ -57,6 +68,8 @@ def checkTokenStatus(session):
 	Returns:
 		string: Success log
 	"""
+	payload = None
+
 	if time.time() > session['token_expiration']:
 		payload = refreshToken(session['refresh_token'])
 
@@ -104,15 +117,20 @@ def makeGetRequest(session, url, params={}):
 	Returns:
 		dictionary: JSON Response
 	"""
-	headers = {'Authorization': "Bearer {}".format(session['token'])}
-	response = requests.get(url, headers=headers, params=params)
+	headers = { 'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': f"Bearer {session['token']}" }
+	get_response = requests.get(url, headers=headers, params=params)
 
-	if response.status_code == 200:
-		return response.json()
-	elif response.status_code == 401 and checkTokenStatus(session) != None:
+	# Log GET Response output in terminal
+	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
+
+	if get_response.status_code == 200:
+		return get_response.json()
+	elif get_response.status_code == 401 and checkTokenStatus(session) != None:
 		return makeGetRequest(session, url, params)
 	else:
-		logging.error('makeGetRequests:' + str(response.status_code))
+		logging.error('makeGetRequests:' + str(get_response.status_code))
 		return None
 
 def makePutRequest(session, url, params={}, data={}):

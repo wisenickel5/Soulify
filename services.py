@@ -5,6 +5,7 @@ import time
 from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
 
 # Local Imports
+from main import app
 from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
                           refreshToken)
 from db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
@@ -26,9 +27,9 @@ def createPlaylist(session, playlist_name):
 		Tuple : 
 	"""
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
-	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Discover Daily\"}"
+	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\"}"
 	payload = makePostRequest(session, url, data)
-
+	app.logger.info(f'(createPlaylist) Payload: {payload}')
 	if payload == None:
 		return None
 
