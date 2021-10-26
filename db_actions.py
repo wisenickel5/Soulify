@@ -1,6 +1,17 @@
 import requests
 
 def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
+	"""Submits ADD Request to Spotify API with resource to be added
+	unitl a status code that equals 201 is recieved or log the error.
+
+	Args:
+		access_token (str): Key used for authorization check
+		playlist_id (str): Key used to identify the playlist of tracks
+		uri_list (list): A list of tracks as URIs
+
+	Returns:
+		string : Success log
+	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
 	headers = {"Authorization": "Bearer {}".format(access_token), 'Accept': 'application/json', 'Content-Type': 'application/json'}
@@ -18,6 +29,16 @@ def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
 		return None
 
 def dbGetTracksPlaylist(access_token, playlist_id, limit=100):
+	"""Submits GET Request to Spotify API with resource to recieve tracks
+	unitl a status code that equals 200 is recieved or log the error.
+
+	Args:
+		limit (int): Maximum number of tracks per request
+
+	Returns:
+		string : Success log
+		track_uri (list): List of tracks URI from playlist
+	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
 	headers = {"Authorization": "Bearer {}".format(access_token)}
@@ -44,6 +65,15 @@ def dbGetTracksPlaylist(access_token, playlist_id, limit=100):
 	return track_uri
 
 def dbClearPlaylist(access_token, playlist_id):
+	"""Submits DELETE Request to Spotify API with resource to remove tracks
+	unitl a status code that equals 200 is recieved or log the error.
+
+	Args:
+		access_token (str): Key used for authorization check
+		playlist_id (str): Key used to identify the playlist of tracks
+	Returns:
+		string : Success log
+	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 	uri_list = dbGetTracksPlaylist(access_token, playlist_id)
 
@@ -61,6 +91,16 @@ def dbClearPlaylist(access_token, playlist_id):
 		return None
 
 def dbGetTopTracksURI(access_token, time, limit=25):
+	"""Submits GET Request to Spotify API with resource to recieve tracks
+	unitl a status code that equals 200 is recieved or log the error.
+
+	Args:
+		time (int): Maximum number of tracks per request
+		limit (int): Maximum number of tracks per request
+
+	Returns:
+		track_uri (list): List of tracks URI from playlist
+	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
 	headers = {"Authorization": "Bearer {}".format(access_token)}

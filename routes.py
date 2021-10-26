@@ -19,7 +19,7 @@ from user_operations import (addUser, getUserDevices, getUserInformation,
 @app.route('/index')
 def index():
 	""" 
-	This connects the hompage to a url.
+	Homepage.
 	"""
 	return render_template('index.html')
 
