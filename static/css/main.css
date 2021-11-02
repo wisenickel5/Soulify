@@ -132,7 +132,7 @@ li.nav-item {
 }
 
 .page-info {
-	color: rgb(0, 0, 0);
+	color: rgb(255, 255, 255);
 	font-family: Montserrat,sans-serif;
 	display: flex;
   justify-content: center;
@@ -283,7 +283,7 @@ footer p {
 
 
 
-/*****************************************************/
+
 
 .clock {
   padding: 0px;
