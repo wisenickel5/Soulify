@@ -2,18 +2,15 @@ import logging
 import time
 
 # Flask Imports
-from flask import (abort, jsonify, make_response, redirect, render_template,
+from flask import (jsonify, make_response, redirect, render_template,
                    request, session)
 
 # Local Imports
 from authenticate import createStateKey, getToken
 from main import app
 from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
-                      getRecommendedTracks, getTopTracksURI, getTrack,
-                      getTrackAfterResume, pausePlayback, searchSpotify,
-                      shuffle, skipTrack, startPlayback, startPlaybackContext)
-from user_operations import (addUser, getUserDevices, getUserInformation,
-                             getUserPlaylists)
+                      getRecommendedTracks, getTopTracksURI,searchSpotify)
+from user_operations import (addUser, getUserInformation)
 
 @app.route('/')
 @app.route('/index')
@@ -126,36 +123,7 @@ def create():
 		session['user_id'] = current_user['id']
 
 	return render_template('create.html')
-	
-@app.route('/timer',  methods=['GET'])
-def timer():
-	"""
-	Activates when the user access the interval timer, it shows the platfrom 
-	of device an playlist being played from. it also includes a timer set 
-	and timer countdown.
-	"""
-	# make sure application is authorized for user 
-	if session.get('token') == None or session.get('token_expiration') == None:
-		session['previous_url'] = '/timer'
-		return redirect('/authorize')
-
-	# collect user information
-	if session.get('user_id') == None:
-		current_user = getUserInformation(session)
-		session['user_id'] = current_user['id']
-
-	device_names = getUserDevices(session)
-	playlist_names = getUserPlaylists(session)
-
-	if device_names == None or playlist_names == None:
-		return render_template('index.html', error='Failed to get device ID and playlists.')
-
-	# length is needed to iterate properly with Jinja
-	device_length = len(device_names)
-	playlist_length = len(playlist_names)
-
-	return render_template('timer.html', playlist_names=playlist_names, playlist_length=playlist_length, device_names=device_names, device_length=device_length)
-	
+		
 @app.route('/tracks/topplaylist',  methods=['POST'])
 def createTopPlaylist():
 	"""
@@ -233,44 +201,6 @@ def createSelectedPlaylist():
 	# send back the created playlist URI so the user is redirected to Spotify
 	return playlist_uri
 	
-@app.route('/timer/start',  methods=['POST'])
-def intervalStart():
-	"""
-	Activates when user uses the intervel timer,
-	the user selected playlist is started with the timer.
-	"""
-	playlist = request.form['playlist']
-	session['device'] = request.form['device']
-
-	# toggle shuffle on/off depending on user
-	is_shuffle = False
-	if 'shuffle' in request.form:
-		is_shuffle = True
-
-	response = shuffle(session, session['device'], is_shuffle)
-
-	# if the user does not have a premium account, this feature cannot be used
-	if response == 403:
-		abort(403)
-
-	# if playback cannot be started on the selected device
-	if response == 404:
-		abort(404)
-
-
-	response = startPlaybackContext(session, playlist, session['device'])
-	if response == 403:
-		abort(403)
-	if response == 404:
-		abort(404)
-
-	# playback takes a while to start
-	time.sleep(0.25)
-
-	# return current track so picture and name can be displayed to user
-	current_playing = getTrackAfterResume(session)
-	return jsonify(current_playing)
-	
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
 	"""
@@ -282,49 +212,3 @@ def autocomplete():
 	results = searchSpotify(session, search)
 
 	return jsonify(matching_results=results)
-
-@app.route('/playback/skip')
-def playbackSkip():
-	"""
-	Activates when song time is over it skips to the next song
-	"""
-	response = skipTrack(session)
-
-	if response == 403:
-		abort(403)
-	if response == 404:
-		abort(404)
-
-	# return current track so picture and name can be displayed to user
-	current_playing = getTrack(session)
-	return jsonify(current_playing)
-	
-@app.route('/playback/pause')
-def playbackPause():
-	"""
-	Activates when the user hits the pause button which, stops the
-	song timer.
-	"""
-	response = pausePlayback(session)
-
-	if response == 403:
-		abort(403)
-	if response == 404:
-		abort(404)
-	return "success"
-	
-@app.route('/playback/resume')
-def playbackResume():
-	"""
-	Activates when the user has touched the pause button for a second time.
-	"""
-	response = startPlayback(session, session['device'])
-
-	if response == 403:
-		abort(403)
-	if response == 404:
-		abort(404)
-
-	# return current track so picture and name can be displayed to user
-	current_playing = getTrackAfterResume(session)
-	return jsonify(current_playing)
