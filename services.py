@@ -1,9 +1,6 @@
 import logging
-import time
-
-# SQLAlchemy Imports
-from sqlalchemy.sql.coercions import StrAsPlainColumnImpl
-
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 # Local Imports
 from main import app
 from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
@@ -297,131 +294,6 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 
 	return rec_track_uri
 
-def shuffle(session, device, is_shuffle=True):
-	"""Shuffle call. Shuffles all songs on the platform.
-
-	Args:
-		session (Session): Flask Session Object
-		device (int): Device ID of the user device. 
-		is_shuffle (bool, optional): Checks if the device's playlist is shuffled. Defaults to True.
-
-	Returns:
-		tuple : Session, url, params
-	"""
-	url = 'https://api.spotify.com/v1/me/player/shuffle'
-	params = {'state': is_shuffle, 'device_id': device}
-	payload = makePutRequest(session, url, params)
-	return payload
-
-def startPlayback(session, device):
-	"""Starts the playback of the session on a user device.
-
-	Args:
-		session (Session): Flask Session Object
-		device (int): Device ID of the user device.
-
-	Returns:
-		tuple:  Session, url, params
-	"""
-	url = 'https://api.spotify.com/v1/me/player/play'
-	params = {'device_id': device}
-	payload = makePutRequest(session, url, params)
-	return payload
-
-def startPlaybackContext(session, playlist, device):
-	"""Starts playback from the playlist on a user device. 
-
-	Args:
-		session (Session): Flask Session Object
-		playlist (int): Selected user playlist
-		device (int): Device ID of the user device.
-
-	Returns:
-		tuple:  Session, url, params
-	"""
-	url = 'https://api.spotify.com/v1/me/player/play'
-	params = {'device_id': device}
-	data = "{\"context_uri\":\"" + playlist + "\",\"offset\":{\"position\":0},\"position_ms\":0}"
-	payload = makePutRequest(session, url, params, data)
-	return payload
-
- 
-def pausePlayback(session):
-	"""Stops the user session from playing tracks. 
-
-	Args:
-		session (Session): Flask Session Object
-
-	Returns:
-		Tuple: session, url
-	"""
-	url = 'https://api.spotify.com/v1/me/player/pause'
-	payload = makePutRequest(session, url)
-	return payload
-
-def skipTrack(session):
-	"""Skips a track.
-
-	Args:
-		session (Session): Flask Session Object
-
-	Returns:
-		Tuple: session, url, data
-	"""
-	url = 'https://api.spotify.com/v1/me/player/next'
-	data = {}
-	payload = makePostRequest(session, url, data)
-	return payload
-
-
-def getTrack(session):
-	"""Call to get the track ID from the user session. 
-
-	Args:
-		session (Session): Flask Session Object
-
-	Returns:
-		tuple: name, img 
-	"""
-	url = 'https://api.spotify.com/v1/me/player/currently-playing'
-	payload = makeGetRequest(session, url)
-
-	if payload == None:
-		return None
-
-	# check to make sure the newest track is being grabbed (progress must be under 5000ms)
-	if payload['progress_ms'] != None and payload['progress_ms'] > 5000:
-		time.sleep(0.2)
-		payload = makeGetRequest(session, url)
-
-		if payload == None:
-			return None
-
-	name = payload['item']['name']
-	img = payload['item']['album']['images'][0]['url']
-
-	return {'name': name, 'img': img}
-
-def getTrackAfterResume(session):
-	"""Gets the track after resuming the user session.
-
-	Args:
-		session (Session): Flask Session Object
-
-	Returns:
-			Dictionary: name, img 
-	"""
-	url = 'https://api.spotify.com/v1/me/player/currently-playing'
-	payload = makeGetRequest(session, url)
-
-	if payload == None :
-		return None
-
-	name = payload['item']['name']
-	img = payload['item']['album']['images'][0]['url']
-
-	return {'name': name, 'img': img}
-
 def searchSpotify(session, search, limit=4):
 	"""Searches the entire spotify library using the spotify API call
 
@@ -466,3 +338,28 @@ def searchSpotify(session, search, limit=4):
 		results_json.append({'label': item[0], 'value': item[1]})
 
 	return results_json
+
+def trackIdsDataFrame(track_ids):
+	ccm = SpotifyClientCredentials(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
+	sp = spotipy.Spotify(client_credentials_manager=ccm)
+	
+	song_meta = {'id':[], 'album':[], 'name':[],
+				'artist':[], 'explicit':[], 'popularity':[]}
+	
+	for id in track_ids:
+		meta = sp.track(id) # Get songs meta data
+
+		song_meta['id'].append(id) # Song Id
+
+		album = meta['album']['name'] # Album Name
+		song_meta['album'] += [album]
+
+		song = meta['name'] # Song Name
+		song_meta['name'] += [song]
+
+		s = ', ' # Artist Name
+		artist = s.join([singer_name['name'] for singer_name in meta['artists']])
+		song_meta['artist'] += [artist]
+
+		explicit = meta['explicit']
+		song_meta['explicit'].append(explicit)
