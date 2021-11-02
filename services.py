@@ -27,7 +27,7 @@ def createPlaylist(session, playlist_name):
 		Dictionary: id, uri
 	"""
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
-	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\"}"
+	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\",\"public\":false}"
 	payload = makePostRequest(session, url, data)
 	app.logger.info(f'(createPlaylist) Payload: {payload}')
 	if payload == None:
