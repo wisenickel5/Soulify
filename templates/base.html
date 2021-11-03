@@ -22,7 +22,7 @@
     <body>
         <nav class="navbar navbar-expand-md nav-scheme navbar-light">
             <a class="navbar-brand logo" href="/" aria-label="Soulify home">
-                <img src="../static/images/logo.png" alt="soulify-logo" id="logo" width="150" />
+                <img src="../static/images/logo.png" alt="soulify-logo" id="logo" width="75" />
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -63,7 +63,8 @@
         </script>
     </body>
 
-    <footer>
+    <footer class="bg-light" >
+        <div class="py-5 bg-light">
         <div class="container py-5">
             {% block footer %}{% endblock %}
 
@@ -113,6 +114,7 @@
                     </ul>
                 </div>
             </div>
+        </div>
         </div>
     </footer>
 </html>
