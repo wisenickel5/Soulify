@@ -18,7 +18,7 @@ div {
 }
 
 i {
-	color: #000;
+	color: rgb(226, 17, 17);
 }
 
 @media (min-width: 768px) {
