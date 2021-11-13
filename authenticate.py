@@ -1,13 +1,9 @@
-from requests.models import codes
-from werkzeug.wrappers import response
 from main import app
 import requests
 import string as string
 import time
 import random as rand
 import logging
-import base64
-import json
 
 def createStateKey(size):
 	"""Provides a state key for authorization request. To prevent forgery attacks, the state key
