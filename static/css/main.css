@@ -73,7 +73,11 @@ li.nav-item {
 .icon-fa {
 	font-size: 25px; 
 }
-
+canvas{
+  position: fixed;
+  top: 0%;
+  bottom: 0%;
+}
 .jumbotron {
   padding: 6rem 1rem!important;
   margin-bottom: 0!important;
@@ -102,7 +106,12 @@ li.nav-item {
   }
 
 }
-
+#soul {
+  border: 5px groove darkblue;
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+}
 .jumbotron p:last-child {
   margin-bottom: 0;
 }
