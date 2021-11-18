@@ -102,14 +102,17 @@ def tracks():
 		session['user_id'] = current_user['id']
 
 	top_track_ids = getAllTopTracks(session)
-
-	if top_track_ids == None:
-		return render_template('index.html', error='Failed to gather top tracks.')
+	#if top_track_ids == None:
+		#return render_template('index.html', error='Failed to gather top tracks.')
 
 	liked_track_ids = getLikedTrackIds(session)
-	lt_df = likedTrackIdsDataFrame(liked_track_ids)
-	music_attributes = normalizeDf(lt_df)
-	createRadarChart(music_attributes)
+	if liked_track_ids == None:
+		return render_template('index.html', error='Failed to get liked tracks')
+	elif liked_track_ids != None:
+		lt_df = likedTrackIdsDataFrame(liked_track_ids)
+		music_attributes = normalizeDf(lt_df)
+		#if (createRadarChart(music_attributes) == False):
+			#app.logger.info("\n\n Radar Chart was not created")
 		
 	return render_template('tracks.html', track_ids=top_track_ids)
 	

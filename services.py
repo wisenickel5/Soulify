@@ -1,3 +1,4 @@
+import os
 import logging
 import spotipy
 import math
@@ -298,18 +299,20 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 
 	return rec_track_uri
 
-def getLikedTrackIds(session, limit=500):
+def getLikedTrackIds(session):
 
 	url = 'https://api.spotify.com/v1/me/tracks'
-	params = {'limit': limit}
-	payload = makeGetRequest(session, url, params)
+	payload = makeGetRequest(session, url)
 
 	if payload == None:
 		return None
 	
 	liked_tracks_ids = []
 	for track in payload['items']:
-		liked_tracks_ids.append(track['id'])
+		liked_id = track['track'].get('id', None)
+		if liked_id:
+			app.logger.info(f"\n\n Track ID: {liked_id}")
+			liked_tracks_ids.append(liked_id)
 	
 	return liked_tracks_ids
 
@@ -406,12 +409,15 @@ def likedTrackIdsDataFrame(liked_track_ids):
 	# Combine dataframes to see individual attributes for a given song
 	final_df = song_meta_df.merge(features_df)
 
+	pd.set_option('display.max_columns', 1000)
+	app.logger.info(print(features_df))
+
 	return features_df
 
 def normalizeDf(features_df: pd.DataFrame) -> pd.DataFrame:
-	music_attributes = features_df[['Danceability', 'Energy', 'Loudness', 'Speechiness',
-									'Acousticness', 'Instrumentalness', 'Liveness',
-									'Valence', 'Tempo', 'duration_ms']]
+	music_attributes = features_df.reindex(columns = [	'Danceability', 'Energy', 'Loudness', 'Speechiness',
+														'Acousticness', 'Instrumentalness', 'Liveness',
+														'Valence', 'Tempo', 'duration_ms'])
 	min_max_scalar = MinMaxScaler()
 	music_attributes.loc[:] = min_max_scalar.fit_transform(music_attributes.loc[:])
 	return music_attributes
@@ -440,4 +446,9 @@ def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
 	plt.xticks(angles[:-1], catagories, size = 15)
 	plt.yticks(color = 'grey', size = 15)
 
+	plt.ioff()
 	plt.savefig('../static/images/radar-chart.png')
+	if (os.path.exists("../static/images/radar-chart.png")):
+		return True
+	else:
+		return False
