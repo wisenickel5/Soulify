@@ -1,6 +1,10 @@
 import logging
 import spotipy
+import math
 from spotipy.oauth2 import SpotifyClientCredentials
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
 # Local Imports
 from main import app
 from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
@@ -21,7 +25,7 @@ def createPlaylist(session, playlist_name):
 		playlist_name (String): Name of the playlist which is being called for
 
 	Returns:
-		Tuple : 
+		Dictionary: id, uri
 	"""
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
 	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\",\"public\":false}"
@@ -129,7 +133,7 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 		limit (int, optional): The literal limit of songs per tracks on the playlist. Defaults to 100.
 
 	Returns:
-		[type]: Track uri **Come back to this
+		[type]: Track uri 
 	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
@@ -161,7 +165,7 @@ def getAllTopTracks(session, limit=10):
 		limit (int, optional): Number of songs per top tracks. Defaults to 10. **
 
 	Returns:
-		int: Returns the id of the top 10 tracks.
+		list [String]: Returns the id of the top 10 tracks.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	track_ids = []
@@ -192,7 +196,7 @@ def getTopTracksID(session, time, limit=25):
 		limit (int, optional): Number of tracks per playlist. Defaults to 25.
 
 	Returns:
-		int: Returns the id of the top 10 tracks.
+		list [String]: Returns the id of the top 10 tracks.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
@@ -216,7 +220,7 @@ def getTopTracksURI(session, time, limit=25):
 		limit (int, optional): [description]. Defaults to 25.
 
 	Returns:
-		[type]: [description]
+		
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
@@ -240,7 +244,7 @@ def getTopArtists(session, time, limit=10):
 		limit (int, optional): Gets the top 10 artists onto the list.. Defaults to 10. **
 
 	Returns:
-		int: Returns the id of the top 10 artists.
+		list [String]: Returns the id of the top 10 Artists.
 	"""
 	url = 'https://api.spotify.com/v1/me/top/artists'
 	params = {'limit': limit, 'time_range': time}
@@ -294,6 +298,21 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 
 	return rec_track_uri
 
+def getLikedTrackIds(session, limit=500):
+
+	url = 'https://api.spotify.com/v1/me/tracks'
+	params = {'limit': limit}
+	payload = makeGetRequest(session, url, params)
+
+	if payload == None:
+		return None
+	
+	liked_tracks_ids = []
+	for track in payload['items']:
+		liked_tracks_ids.append(track['id'])
+	
+	return liked_tracks_ids
+
 def searchSpotify(session, search, limit=4):
 	"""Searches the entire spotify library using the spotify API call
 
@@ -303,7 +322,7 @@ def searchSpotify(session, search, limit=4):
 		limit (int, optional): Limit of searches shown in the search bar. Defaults to 4.
 
 	Returns:
-		Tuple: label, item
+		dictionary: JSON Response
 	"""
 	url = 'https://api.spotify.com/v1/search'
 	params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
@@ -339,27 +358,86 @@ def searchSpotify(session, search, limit=4):
 
 	return results_json
 
-def trackIdsDataFrame(track_ids):
+def likedTrackIdsDataFrame(liked_track_ids):
 	ccm = SpotifyClientCredentials(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
 	sp = spotipy.Spotify(client_credentials_manager=ccm)
 	
 	song_meta = {'id':[], 'album':[], 'name':[],
 				'artist':[], 'explicit':[], 'popularity':[]}
 	
-	for id in track_ids:
+	for id in liked_track_ids:
 		meta = sp.track(id) # Get songs meta data
 
-		song_meta['id'].append(id) # Song Id
+		# Song Id
+		song_meta['id'].append(id)
 
-		album = meta['album']['name'] # Album Name
+		# Album Name
+		album = meta['album']['name']
 		song_meta['album'] += [album]
 
-		song = meta['name'] # Song Name
+		# Song Name
+		song = meta['name']
 		song_meta['name'] += [song]
 
-		s = ', ' # Artist Name
+		# Artist Name
+		s = ', '
 		artist = s.join([singer_name['name'] for singer_name in meta['artists']])
 		song_meta['artist'] += [artist]
 
+		# Explicit
 		explicit = meta['explicit']
 		song_meta['explicit'].append(explicit)
+
+		# Popularity
+		popularity = meta['popularity']
+		song_meta['popularity'].append(popularity)
+	
+	song_meta_df = pd.DataFrame.from_dict(song_meta)
+
+	# Check the song feature
+	features = sp.audio_features(song_meta['id'])
+	features_df = pd.DataFrame.from_dict(features)
+
+	# Convert milliseconds to minutes
+	# duration_ms = The duration of the track in milliseconds
+	# 1 minute = 60 seconds = 60 * 1000 milliseconds = 60,000 milliseconds
+	features_df['duration_ms'] = features_df['duration_ms'] / 60000
+
+	# Combine dataframes to see individual attributes for a given song
+	final_df = song_meta_df.merge(features_df)
+
+	return features_df
+
+def normalizeDf(features_df: pd.DataFrame) -> pd.DataFrame:
+	music_attributes = features_df[['Danceability', 'Energy', 'Loudness', 'Speechiness',
+									'Acousticness', 'Instrumentalness', 'Liveness',
+									'Valence', 'Tempo', 'duration_ms']]
+	min_max_scalar = MinMaxScaler()
+	music_attributes.loc[:] = min_max_scalar.fit_transform(music_attributes.loc[:])
+	return music_attributes
+
+def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
+	# Plot Size
+	fig = plt
+
+	# Convert Column names to a list
+	catagories = list(music_attributes.columns)
+	# Number of catagories
+	N = len(catagories)
+
+	value = list(music_attributes.mean())
+
+	value += value[:1]
+
+	# Angles for each category
+	angles = [n / float(N) * 2 * math.pi for n in range(N)]
+	angles += angles[:1]
+
+	# Plot
+	plt.polar(angles, value)
+	plt.fill(angles, value, alpha = 0.3)
+
+	plt.xticks(angles[:-1], catagories, size = 15)
+	plt.yticks(color = 'grey', size = 15)
+
+	plt.savefig('../static/images/radar-chart.png')

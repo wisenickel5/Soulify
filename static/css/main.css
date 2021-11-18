@@ -6,7 +6,7 @@ body {
   padding: 0;
   display: block;
   color: #000!important;
-  background: linear-gradient(349deg, rgba(45, 45, 45, 1) 15%, rgba(159, 76, 154,1) 55%, rgba(85, 135, 240, 1) 77%)!important;
+  background: linear-gradient(349deg, #ffd89b 33%, #19547b 77%)!important;
 }
 
 div {
@@ -42,7 +42,7 @@ i {
 
 .nav-scheme {
   overflow: hidden;
-  background-color: white;
+  background-color: rgb(0, 0, 0);
   position: sticky!important;
   top: 0;
   width: 100%;
@@ -51,14 +51,21 @@ i {
   border-width: 2px;
   border-color: black;
   font-weight: 600;
+  
 }
 
 .nav-scheme p, i {
-  color: black;
+  color: rgb(255, 255, 255);
 }
 
 .nav-scheme p:hover, i:hover {
-  color: gray;
+    background-color: #f3ec78;
+    background-image: linear-gradient(45deg, #000d86, #004e92);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
 }
 
 ul.navbar-nav {
@@ -68,6 +75,7 @@ ul.navbar-nav {
 li.nav-item {
   height: 65px;
   line-height: 45px;
+  
 }
 
 .icon-fa {
@@ -82,8 +90,8 @@ canvas{
   padding: 6rem 1rem!important;
   margin-bottom: 0!important;
   background-image: linear-gradient(
-      rgba(84, 118, 255, 0.9), 
-      rgba(119, 44, 115, 0.8)
+    #19547b,
+    #ffd89b 
     );
   background-size: cover;
   color: #fff !important;
@@ -133,7 +141,7 @@ canvas{
 }
 
 .page-info {
-	color: #fff;
+	color: rgb(255, 255, 255);
 	font-family: Montserrat,sans-serif;
 	display: flex;
   justify-content: center;
@@ -205,7 +213,7 @@ footer p {
   position: relative;
   border: 3px solid white;
   border-radius: 15px;
-  background: rgba(239, 239, 239, 0.5);
+  background:rgba(0, 0, 0, 0.5);
 }
 
 .form-line{
@@ -284,7 +292,7 @@ footer p {
 
 
 
-/*****************************************************/
+
 
 .clock {
   padding: 0px;
@@ -404,3 +412,5 @@ footer p {
 .hyperlink-black {
   color: #000;
 }
+
+
