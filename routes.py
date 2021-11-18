@@ -9,7 +9,9 @@ from flask import (jsonify, make_response, redirect, render_template,
 from authenticate import createStateKey, getToken
 from main import app
 from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
-                      getRecommendedTracks, getTopTracksURI,searchSpotify)
+                      getRecommendedTracks, getTopTracksURI,searchSpotify,
+					  createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
+					  normalizeDf)
 from user_operations import (addUser, getUserInformation)
 
 @app.route('/')
@@ -99,12 +101,17 @@ def tracks():
 		current_user = getUserInformation(session)
 		session['user_id'] = current_user['id']
 
-	track_ids = getAllTopTracks(session)
+	top_track_ids = getAllTopTracks(session)
 
-	if track_ids == None:
+	if top_track_ids == None:
 		return render_template('index.html', error='Failed to gather top tracks.')
+
+	liked_track_ids = getLikedTrackIds(session)
+	lt_df = likedTrackIdsDataFrame(liked_track_ids)
+	music_attributes = normalizeDf(lt_df)
+	createRadarChart(music_attributes)
 		
-	return render_template('tracks.html', track_ids=track_ids)
+	return render_template('tracks.html', track_ids=top_track_ids)
 	
 @app.route('/create',  methods=['GET'])
 def create():
