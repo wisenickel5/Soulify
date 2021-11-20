@@ -20,16 +20,16 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 # make sure user table is created
-from user_operations import User
+from App.user_operations import User
 Base.metadata.create_all(engine)
 
 # schedule updates for the TopTracks playlists
-from services import updatePlaylists
+from App.services import updatePlaylists
 scheduler = BackgroundScheduler()
 scheduler.add_job(updatePlaylists, trigger='interval', days=1)
 scheduler.start()
 
-import routes
+import App.routes
 bootstrap = Bootstrap(app)
 
 if __name__ == "__main__":
