@@ -1,4 +1,4 @@
-from main import app
+from App import app
 import requests
 import string as string
 import time

@@ -7,7 +7,7 @@ from flask import (jsonify, make_response, redirect, render_template,
 
 # Local Imports
 from authenticate import createStateKey, getToken
-from main import app
+from App import app
 from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
                       getRecommendedTracks, getTopTracksURI,searchSpotify,
 					  createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
