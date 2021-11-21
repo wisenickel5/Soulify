@@ -1,7 +1,6 @@
-from flask import current_app
-from current_app import Base, Session
+from App import Base, Session
 import logging
-from authenticate import makeGetRequest
+from App.authenticate import makeGetRequest
 from sqlalchemy import Column, Integer, String
 
 class User(Base):

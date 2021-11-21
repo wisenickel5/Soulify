@@ -6,14 +6,14 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
+
 # Local Imports
 from flask import current_app
-from App.authenticate import (makeGetRequest, makePostRequest, makePutRequest,
-                          refreshToken)
-from App.db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
-                        dbGetTopTracksURI, dbGetTracksPlaylist)
-from App import Base, Session
-from App.user_operations import User
+from App.authenticate import (	makeGetRequest, makePostRequest, refreshToken)
+from App.DbMs.db_actions import (	dbAddTracksPlaylist, dbClearPlaylist,
+                        			dbGetTopTracksURI)
+from App import Session
+from App.DbMs.user_operations import User
 
 
 def createPlaylist(session, playlist_name):
