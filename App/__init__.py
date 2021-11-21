@@ -1,3 +1,4 @@
+from re import S
 from flask import Flask
 from flask_bootstrap import Bootstrap
 import config
@@ -10,7 +11,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from apscheduler.schedulers.background import BackgroundScheduler
 
 template_dir = os.path.abspath('../Soulify/App/UI/templates/')
-app = Flask(__name__, template_folder=template_dir)
+static_dir = os.path.abspath('../Soulify/App/UI/static/')
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.config.from_object(config)
 app.secret_key = app.config['CLIENT_SECRET']
 
