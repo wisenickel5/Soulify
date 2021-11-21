@@ -1,4 +1,6 @@
-from App import app
+from flask import current_app
+app = current_app
+
 import requests
 import string as string
 import time

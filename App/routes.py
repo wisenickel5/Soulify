@@ -6,13 +6,14 @@ from flask import (jsonify, make_response, redirect, render_template,
                    request, session)
 
 # Local Imports
-from authenticate import createStateKey, getToken
-from App import app
-from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
+from App.authenticate import createStateKey, getToken
+from flask import current_app
+app = current_app
+from App.services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
                       getRecommendedTracks, getTopTracksURI,searchSpotify,
 					  createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
 					  normalizeDf)
-from user_operations import (addUser, getUserInformation)
+from App.user_operations import (addUser, getUserInformation)
 
 @app.route('/')
 @app.route('/index')
