@@ -1,4 +1,3 @@
-from re import S
 from flask import Flask
 from flask_bootstrap import Bootstrap
 import config
@@ -19,8 +18,9 @@ app.secret_key = app.config['CLIENT_SECRET']
 engine = create_engine('sqlite:///:memory:', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
-Base.metadata.create_all(engine)
+# Create User Table
 from App.DbMs.user_operations import User
+Base.metadata.create_all(engine)
 
 # schedule updates for the TopTracks playlists
 from App.services import updatePlaylists
