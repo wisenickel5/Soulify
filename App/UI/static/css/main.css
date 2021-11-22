@@ -405,3 +405,9 @@ footer p {
 }
 
 
+/* Three.js */
+#canvas {
+  position: static;
+  outline: none;
+}
+
