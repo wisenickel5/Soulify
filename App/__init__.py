@@ -18,7 +18,9 @@ app.secret_key = app.config['CLIENT_SECRET']
 engine = create_engine('sqlite:///:memory:', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
-# Create User Table
+# Creating User Table:
+# The User Model needs to be imported before
+# the .create_all() function is called
 from App.DbMs.user_operations import User
 Base.metadata.create_all(engine)
 
