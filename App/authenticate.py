@@ -1,4 +1,4 @@
-from main import app
+from flask import current_app
 import requests
 import string as string
 import time
@@ -28,11 +28,11 @@ def getToken(code):
 	Returns:
 		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
 	"""	
-	grant_type = app.config['GRANT_TYPE']
-	redirect_uri = app.config['REDIRECT_URI']
-	client_id = app.config['CLIENT_ID']
-	client_secret = app.config['CLIENT_SECRET']
-	token_url = app.config['TOKEN_URL']
+	grant_type = current_app.config['GRANT_TYPE']
+	redirect_uri = current_app.config['REDIRECT_URI']
+	client_id = current_app.config['CLIENT_ID']
+	client_secret = current_app.config['CLIENT_SECRET']
+	token_url = current_app.config['TOKEN_URL']
 	request_body = {
         "grant_type": grant_type,
         "code": code,
@@ -44,9 +44,9 @@ def getToken(code):
 	p_response = post_request.json()
 
 	# Log POST Response output in terminal
-	app.logger.info(f"\n\nCurrent code {code}")
-	app.logger.info(f'\n\nWisenickel:(getToken) Post Response Status Code -> {post_request.status_code}')
-	app.logger.info(f'\n\nPost Response Formatted -> {post_request}\n\n')
+	current_app.logger.info(f"\n\nCurrent code {code}")
+	current_app.logger.info(f'\n\nWisenickel:(getToken) Post Response Status Code -> {post_request.status_code}')
+	current_app.logger.info(f'\n\nPost Response Formatted -> {post_request}\n\n')
 
 	if post_request.status_code == 200:
 		return p_response['access_token'], p_response['refresh_token'], p_response['expires_in']
@@ -88,7 +88,7 @@ def refreshToken(refresh_token):
 		tuple(str, str): Access Token, Expiration Time
 	"""
 	token_url = 'https://accounts.spotify.com/api/token'
-	authorization = app.config['AUTHORIZATION']
+	authorization = current_app.config['AUTHORIZATION']
 
 	headers = {'Authorization': authorization, 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
 	body = {'refresh_token': refresh_token, 'grant_type': 'refresh_token'}
@@ -119,7 +119,7 @@ def makeGetRequest(session, url, params={}):
 	get_response = requests.get(url, headers=headers, params=params)
 
 	# Log GET Response output in terminal
-	app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
+	current_app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
 
 	if get_response.status_code == 200:
 		return get_response.json()

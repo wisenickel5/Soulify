@@ -6,13 +6,14 @@ from flask import (jsonify, make_response, redirect, render_template,
                    request, session)
 
 # Local Imports
-from authenticate import createStateKey, getToken
-from main import app
-from services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
+from App.authenticate import createStateKey, getToken
+from flask import current_app
+from App import app
+from App.services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
                       getRecommendedTracks, getTopTracksURI,searchSpotify,
 					  createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
 					  normalizeDf)
-from user_operations import (addUser, getUserInformation)
+from App.DbMs.user_operations import (addUser, getUserInformation)
 
 @app.route('/')
 @app.route('/index')
@@ -29,9 +30,9 @@ def authorize():
 	the app to use their account and the page redirects them to the account 
 	page. 
 	"""
-	client_id = app.config['CLIENT_ID']
-	redirect_uri = app.config['REDIRECT_URI']
-	scope = app.config['SCOPE']
+	client_id = current_app.config['CLIENT_ID']
+	redirect_uri = current_app.config['REDIRECT_URI']
+	scope = current_app.config['SCOPE']
 
 	# state key used to protect against cross-site forgery attacks
 	state_key = createStateKey(15)
@@ -40,7 +41,7 @@ def authorize():
 	# redirect user to Spotify authorization page
 	authorize_url = 'https://accounts.spotify.com/en/authorize?'
 	parameters = 'client_id=' + client_id + '&response_type=code' + '&redirect_uri=' + redirect_uri + '&scope=' + scope + '&state=' + state_key
-	app.logger.info(authorize_url + parameters)
+	current_app.logger.info(authorize_url + parameters)
 	response = make_response(redirect(authorize_url + parameters))
 
 	return response

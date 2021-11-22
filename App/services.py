@@ -6,14 +6,14 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
+
 # Local Imports
-from main import app
-from authenticate import (makeGetRequest, makePostRequest, makePutRequest,
-                          refreshToken)
-from db_actions import (dbAddTracksPlaylist, dbClearPlaylist,
-                        dbGetTopTracksURI, dbGetTracksPlaylist)
-from main import Base, Session
-from user_operations import User
+from flask import current_app
+from App.authenticate import (	makeGetRequest, makePostRequest, refreshToken)
+from App.DbMs.db_actions import (	dbAddTracksPlaylist, dbClearPlaylist,
+                        			dbGetTopTracksURI)
+from App import Session
+from App.DbMs.user_operations import User
 
 
 def createPlaylist(session, playlist_name):
@@ -31,7 +31,7 @@ def createPlaylist(session, playlist_name):
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
 	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\",\"public\":false}"
 	payload = makePostRequest(session, url, data)
-	app.logger.info(f'(createPlaylist) Payload: {payload}')
+	current_app.logger.info(f'(createPlaylist) Payload: {payload}')
 	if payload == None:
 		return None
 
@@ -311,7 +311,7 @@ def getLikedTrackIds(session):
 	for track in payload['items']:
 		liked_id = track['track'].get('id', None)
 		if liked_id:
-			app.logger.info(f"\n\n Track ID: {liked_id}")
+			current_app.logger.info(f"\n\n Track ID: {liked_id}")
 			liked_tracks_ids.append(liked_id)
 	
 	return liked_tracks_ids
@@ -362,7 +362,7 @@ def searchSpotify(session, search, limit=4):
 	return results_json
 
 def likedTrackIdsDataFrame(liked_track_ids):
-	ccm = SpotifyClientCredentials(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
+	ccm = SpotifyClientCredentials(current_app.config['CLIENT_ID'], current_app.config['CLIENT_SECRET'])
 	sp = spotipy.Spotify(client_credentials_manager=ccm)
 	
 	song_meta = {'id':[], 'album':[], 'name':[],
@@ -410,7 +410,7 @@ def likedTrackIdsDataFrame(liked_track_ids):
 	final_df = song_meta_df.merge(features_df)
 
 	pd.set_option('display.max_columns', 1000)
-	app.logger.info(print(features_df))
+	current_app.logger.info(print(features_df))
 
 	return features_df
 

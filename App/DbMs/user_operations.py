@@ -1,6 +1,6 @@
-from main import Base, Session
+from App import Base, Session
 import logging
-from authenticate import makeGetRequest
+from App.authenticate import makeGetRequest
 from sqlalchemy import Column, Integer, String
 
 class User(Base):
