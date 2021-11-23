@@ -381,6 +381,7 @@ footer p {
 
 .selected-search {
 	line-height: 38px;
+  padding-left: 73px;
 	font-size: 0.75rem!important;
 	width: calc(100% - (75px))!important;
 	overflow: hidden;
@@ -394,6 +395,10 @@ footer p {
 
 .center-parent {
 	text-align: center;
+}
+
+.center-create-text{
+  text-align-last: center;
 }
 
 .center-child {
