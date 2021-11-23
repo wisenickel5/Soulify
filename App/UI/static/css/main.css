@@ -407,7 +407,10 @@ footer p {
 
 /* Three.js */
 #canvas {
-  position: fixed;
-  outline: none;
+  display: block;
+  position: static;
+  border: 2px solid blue;
+  width: 100% !important;
+  height: 100% !important;
 }
 
