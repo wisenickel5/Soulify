@@ -407,7 +407,7 @@ footer p {
 
 /* Three.js */
 #canvas {
-  position: static;
+  position: fixed;
   outline: none;
 }
 

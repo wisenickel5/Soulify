@@ -3,7 +3,7 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( 700, 400 );
-document.body.appendChild( renderer.domElement );
+document.querySelector('#canvas').appendChild( renderer.domElement );
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
