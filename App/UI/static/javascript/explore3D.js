@@ -1,11 +1,22 @@
+const canvas = document.getElementById('canvas');
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-canvas = document.getElementById("canvas");
+const camera = new THREE.PerspectiveCamera( 
+    30, // Field of View
+    5, // Aspect Ratio
+    0.1, // Near Clipping Plane
+    100 // Far Clipping Plane
+);
 
 const renderer = new THREE.WebGLRenderer( {antialias: true} );
-//renderer.setSize( 700, 400);
 canvas.appendChild( renderer.domElement );
+renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+
+window.addEventListener( 'resize', onWindowResize, false );	
+function onWindowResize() {
+   camera.aspect = 5;
+   camera.updateProjectionMatrix();
+   renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+};
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );

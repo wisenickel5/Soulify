@@ -51,7 +51,7 @@ i {
   border-width: 2px;
   border-color: black;
   font-weight: 600;
-  
+  color: white !important;
 }
 
 .nav-scheme p, i {
@@ -60,7 +60,7 @@ i {
 
 .nav-scheme p:hover, i:hover {
     background-color: #f3ec78;
-    background-image: linear-gradient(45deg, #000d86, #004e92);
+    background-image: linear-gradient(45deg, #292929, #ffffff);
     background-size: 100%;
     -webkit-background-clip: text;
     -moz-background-clip: text;
@@ -79,7 +79,8 @@ li.nav-item {
 }
 
 .icon-fa {
-	font-size: 25px; 
+	font-size: 25px;
+  color: black;
 }
 
 .jumbotron {
@@ -414,7 +415,7 @@ footer p {
 #canvas {
   display: block;
   position: static;
-  border: 2px solid blue;
+  border: 2px solid black;
   width: 100% !important;
   height: 100% !important;
 }
