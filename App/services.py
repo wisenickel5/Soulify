@@ -6,7 +6,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib as mpl
-mpl.use('Agg')
+mpl.use('Agg') # Use MatPlotLib without the GUI
 import matplotlib.pyplot as plt
 
 # Local Imports
