@@ -410,6 +410,13 @@ footer p {
   color: #000;
 }
 
+/* Radar Chart */
+#radar-chart {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
 
 /* Three.js */
 #canvas {
