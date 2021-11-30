@@ -168,6 +168,10 @@ footer {
   border-top: 2px solid black;
 }
 
+.text-muted{
+  white-space: nowrap;
+}
+
 footer p {
   margin-bottom: .25rem;
 }
