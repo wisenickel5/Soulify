@@ -1,20 +1,18 @@
 import logging
 import time
-import os
 
 # Flask Imports
-from flask import (	jsonify, make_response, 
-					redirect, render_template,
-                   	request, session	)
+from flask import (jsonify, make_response, redirect, render_template,
+                   request, session)
 
 # Local Imports
 from App.authenticate import createStateKey, getToken
 from flask import current_app
 from App import app
-from App.services import (	addTracksPlaylist, createPlaylist, getAllTopTracks,
-                      		getRecommendedTracks, getTopTracksURI,searchSpotify,
-					  		createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
-					  		normalizeDf	)
+from App.services import (addTracksPlaylist, createPlaylist, getAllTopTracks,
+                      getRecommendedTracks, getTopTracksURI,searchSpotify,
+					  createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
+					  normalizeDf)
 from App.DbMs.user_operations import (addUser, getUserInformation)
 
 @app.route('/')
@@ -114,7 +112,8 @@ def tracks():
 	elif liked_track_ids != None:
 		lt_df = likedTrackIdsDataFrame(liked_track_ids)
 		music_attributes = normalizeDf(lt_df)
-		createRadarChart(music_attributes)
+		#if (createRadarChart(music_attributes) == False):
+			#app.logger.info("\n\n Radar Chart was not created")
 		
 	return render_template('tracks.html', track_ids=top_track_ids)
 	
