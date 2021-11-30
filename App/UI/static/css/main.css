@@ -393,6 +393,10 @@ footer p {
 	padding: .1rem 1.25rem !important;
 }
 
+.fa-times-circle, .fa-clipboard-check, .fa-map-marker, .fa-envelope, .fa-user-tie{
+  color: #000;
+}
+
 .center-parent {
 	text-align: center;
 }
