@@ -396,8 +396,21 @@ footer p {
 	padding: .1rem 1.25rem !important;
 }
 
-.fa-times-circle, .fa-clipboard-check, .fa-map-marker, .fa-envelope, .fa-user-tie{
+.fa-times-circle, .fa-clipboard-check, .fa-map-marker, .fa-envelope, .fa-user-tie, .fa-github{
   color: #000;
+}
+
+.btn-block{
+  background-color: black !important;
+  border-color: black !important;
+}
+.btn-block:hover{
+  background-image: linear-gradient(
+    #19547b,
+    #ffd89b);
+  border-color: linear-gradient(
+    #19547b,
+    #ffd89b) !important;
 }
 
 .center-parent {
