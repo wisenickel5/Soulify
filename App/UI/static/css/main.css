@@ -384,14 +384,13 @@ footer p {
 	line-height: 38px;
   padding-left: 73px;
 	font-size: 0.75rem!important;
-	width: calc(100% - (75px))!important;
 	overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .list-group-item {
-	padding: .1rem 1.25rem;
+	padding: .1rem 1.25rem !important;
 }
 
 .center-parent {
