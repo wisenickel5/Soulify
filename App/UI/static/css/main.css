@@ -60,7 +60,7 @@ i {
 
 .nav-scheme p:hover, i:hover {
     background-color: #f3ec78;
-    background-image: linear-gradient(45deg, #292929, #ffffff);
+    background-image: linear-gradient(349deg, #ffd89b 33%, #19547b 77%)!important;
     background-size: 100%;
     -webkit-background-clip: text;
     -moz-background-clip: text;
