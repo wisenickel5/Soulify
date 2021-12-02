@@ -1,4 +1,7 @@
-const canvas = document.getElementById('bg'); // Be sure to change this 
+import * as THREE from 'https://cdn.skypack.dev/three@0.135.0';
+import { TextGeometry } from "./TextGeometry.js";
+
+const canvas = document.getElementById('canvas'); // Be sure to change this 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 
     30, // Field of View
@@ -18,19 +21,34 @@ function onWindowResize() {
    renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 };
 
-var text = "Explore Music in a new way";
-const geometry = new THREE.TextGeometry( );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+var textString = "Explore Music in a new way";
+
+var textMaterial = new THREE.MeshPhongMaterial( 
+    { color: 0xff0000, specular: 0xffffff }
+  );
+
+const geometry = new TextGeometry( textString, {
+    font: "Gotham_Medium_Regular",
+    size: 80,
+    height: 5,
+    curveSegments: 12,
+    bevelEnabled: true,
+    bevelThickness: 10,
+    bevelSize: 8,
+    bevelOffset: 0,
+    bevelSegments: 5
+});
+
+const text = new THREE.Mesh( geometry, textMaterial );
+scene.add( text );
 
 camera.position.z = 5;
 
 const animate = function () {
     requestAnimationFrame( animate );
 
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    text.rotation.x += 0.01;
+    text.rotation.y += 0.01;
 
     renderer.render( scene, camera );
 };
