@@ -86,10 +86,7 @@ li.nav-item {
 .jumbotron {
   padding: 6rem 1rem!important;
   margin-bottom: 0!important;
-  background-image: linear-gradient(
-    #19547b,
-    #ffd89b 
-    );
+  background-image: linear-gradient(330deg, #ffd89b 33%, #19547b 77%);
   background-size: cover;
   color: #fff !important;
   font-family: Montserrat,sans-serif;
