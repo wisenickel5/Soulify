@@ -5,6 +5,8 @@ import math
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+import matplotlib as mpl
+mpl.use('Agg') # Use MatPlotLib without the GUI
 import matplotlib.pyplot as plt
 
 # Local Imports
@@ -404,51 +406,60 @@ def likedTrackIdsDataFrame(liked_track_ids):
 	# Convert milliseconds to minutes
 	# duration_ms = The duration of the track in milliseconds
 	# 1 minute = 60 seconds = 60 * 1000 milliseconds = 60,000 milliseconds
-	features_df['duration_ms'] = features_df['duration_ms'] / 60000
+	features_df['duration'] = features_df['duration_ms'] / 60000
 
 	# Combine dataframes to see individual attributes for a given song
-	final_df = song_meta_df.merge(features_df)
+	# final_df = song_meta_df.merge(features_df)
 
 	pd.set_option('display.max_columns', 1000)
+	current_app.logger.info("\n Features_DF")
 	current_app.logger.info(print(features_df))
 
 	return features_df
 
 def normalizeDf(features_df: pd.DataFrame) -> pd.DataFrame:
-	music_attributes = features_df.reindex(columns = [	'Danceability', 'Energy', 'Loudness', 'Speechiness',
-														'Acousticness', 'Instrumentalness', 'Liveness',
-														'Valence', 'Tempo', 'duration_ms'])
+	music_attributes = features_df.filter([	'danceability', 'energy', 'loudness',
+											'speechiness', 'acousticness', 'instrumentalness'
+											'liveness', 'valence', 'tempo', 'duration'],
+											axis=1	)
+
+	current_app.logger.info("\n Music Attributes BEFORE Scaling")
+	current_app.logger.info(print(music_attributes))
 	min_max_scalar = MinMaxScaler()
 	music_attributes.loc[:] = min_max_scalar.fit_transform(music_attributes.loc[:])
+
+	pd.set_option('display.max_columns', 1000)
+	current_app.logger.info("\n Music Attributes AFTER Scaling")
+	current_app.logger.info(print(music_attributes))
 	return music_attributes
 
 def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
-	# Plot Size
-	fig = plt
-
+	# Set Plot Attributes
+	plt.style.use('dark_background')
+	fig = plt.figure(figsize=(12,8))
+	ax = fig.add_subplot(111, projection="polar") # Axes Subplot
 	# Convert Column names to a list
 	catagories = list(music_attributes.columns)
 	# Number of catagories
 	N = len(catagories)
-
 	value = list(music_attributes.mean())
-
 	value += value[:1]
 
 	# Angles for each category
-	angles = [n / float(N) * 2 * math.pi for n in range(N)]
-	angles += angles[:1]
+	angles=[n / float(N) * 2 * math.pi for n in range(N)]
+	angles+=angles[:1]
 
 	# Plot
 	plt.polar(angles, value)
 	plt.fill(angles, value, alpha = 0.3)
-
 	plt.xticks(angles[:-1], catagories, size = 15)
 	plt.yticks(color = 'grey', size = 15)
+	plt.ioff() # Turn Interactive Mode Off
 
-	plt.ioff()
-	plt.savefig('../static/images/radar-chart.png')
-	if (os.path.exists("../static/images/radar-chart.png")):
-		return True
-	else:
-		return False
+	# Saving Figure
+	img_dir = os.path.abspath("../Soulify/App/UI/static/")
+	radar_chart_file = os.path.abspath('../Soulify/App/UI/static/images/radar-chart.png')
+	# Check if the png exists, if it does delete it
+	if (os.path.isfile(radar_chart_file)):
+		os.remove(radar_chart_file)
+	fig.savefig(img_dir + "/images/radar-chart.png")

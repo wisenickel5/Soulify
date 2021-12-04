@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
     <head>
         {% block head %}
@@ -8,6 +8,10 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css')}}" />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../static/images/favicons/apple-touch-icon.png"> 
+        <link rel="icon" type="image/png" sizes="32x32" href="../static/images/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../static/images/favicons/favicon-16x16.png">
+        <link rel="manifest" href="../static/images/favicons/site.webmanifest">  
         <link rel="shortcut icon" href="#" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -70,8 +74,11 @@
 
             <div class="row">
                 <div class="col-12 col-md">
-                    <p class="text-muted">Inspired by Spotify's Discover Weekly playlists, this website was designed to give Spotify users more versatility with their music.</p>
-                    <p class="text-muted"><strong>Disclaimer:</strong> Due to limitations with the Spotify SDK, this app will only work for Spotify premium users.</p>
+                    <p class="text-muted">
+                        This website was created to provide Spotify 
+                        listeners more freedom with their music, and 
+                        was inspired by Spotify's Daily Mix playlists.
+                    </p>
                 </div>
             </div>
             <br />
@@ -81,7 +88,7 @@
                     <a href="/" aria-label="Soulify home">
                         <img src="../static/images/logo.png" alt="soulify-logo" id="logo" width="150" />
                     </a>
-                    <small class="d-block mb-3 text-muted">2020</small>
+                    <small class="d-block mb-3 text-muted">2021</small>
                 </div>
                 <div class="col-6 col-md">
                     <h5>Features</h5>
@@ -97,10 +104,10 @@
                     </ul>
                 </div>
                 <div class="col-6 col-md">
-                    <h5>We would love your feedback!</h5>
+                    <h5>We'd love to hear from you!</h5>
                     <ul class="list-unstyled text-small">
                         <li class="text-muted">
-                            <i class="fa fa-map-marker"></i>
+                            <a href="https://www.google.com/maps/place/Atlanta,+GA+30303/@33.7528113,-84.4099395,14z/data=!3m1!4b1!4m5!3m4!1s0x88f502543704ef85:0x4d4d0436b05f0fb3!8m2!3d33.755711!4d-84.3883717"><i class="fa fa-map-marker"></i></a>
                             Atlanta, Georgia
                         </li>
                         <li class="text-muted">
@@ -108,8 +115,12 @@
                             dalexa75@students.kennesaw.edu
                         </li>
                         <li class="text-muted">
-                            <i class="fas fa-user-tie"></i>
-                            KSU Group 1
+                            <a href="https://ccse.kennesaw.edu/"><i class="fas fa-user-tie"></i></a>
+                            KSU SWE 3313: Group 1
+                        </li>
+                        <li class="text-muted">
+                            <a href="https://github.com/wisenickel5/Soulify"><i class="fab fa-github"></i></a>
+                            Source Code
                         </li>
                     </ul>
                 </div>
