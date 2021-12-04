@@ -20,7 +20,7 @@ function init(){
 		0.1, // Near Clipping Plane
 		1000 // Far Clipping Plane
 	);
-	camera.position.set( -500, 100, 0 );
+	camera.position.set( -600, 100, 0 );
 	
 	// Scene
 	scene = new THREE.Scene();
@@ -45,11 +45,21 @@ function init(){
 			reflectivity: 1,
 			shininess: 100,
 			emissive: 0x000000,
-			emissiveIntensity: 50
+			emissiveIntensity: 100
 		});
 		const textString = "Explore Music In A New Way";
-		const shapes = font.generateShapes( textString, 100 );
-		const geometry = new THREE.ShapeGeometry( shapes );
+		const geometry = new TextGeometry( textString,
+		{
+			font: font,
+			size: 70,
+			height: 50,
+			curveSegments: 30,
+			bevelEnabled: false,
+			bevelThickness: 10,
+			bevelSize: 8,
+			bevelOffset: 0,
+			bevelSegments: 5
+		});
         geometry.computeBoundingBox();
 		const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
         geometry.translate( xMid, 0, 0 );
@@ -79,7 +89,7 @@ function onWindowResize() {
 
 function animate() {
 	requestAnimationFrame( animate );
-	textObj.rotation.y -= 0.0055;
+	textObj.rotation.y -= 0.0015;
 	render();
 };
 
