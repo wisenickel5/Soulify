@@ -2,13 +2,17 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0';
 import { TextGeometry } from "./TextGeometry.js";
 import { FontLoader } from "./FontLoader.js";
 
-let canvas, scene, camera, renderer;
+let parent, canvas, scene, camera, renderer;
 var textObj;
 
 init();
 
 function init(){
-	canvas = document.getElementById('canvas'); // Be sure to change this 
+	parent = document.getElementById('canvas-holder');
+	canvas = document.getElementById('canvas');
+	canvas.width = parent.offsetWidth;
+	canvas.height = parent.offsetHeight;
+
 	// Camera
 	camera = new THREE.PerspectiveCamera( 
 		75, // Field of View

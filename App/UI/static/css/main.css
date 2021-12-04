@@ -374,7 +374,12 @@ footer p {
   display: block;
   position: static;
   border: 2px solid black;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100vw;
+  height: 320px;
+}
+
+.container-fluid {
+  padding-right: 0% !important;
+  padding-left: 0% !important;
 }
 
