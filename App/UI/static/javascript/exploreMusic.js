@@ -18,35 +18,36 @@ function init(){
 		75, // Field of View
 		5, // Aspect Ratio
 		0.1, // Near Clipping Plane
-		100 // Far Clipping Plane
+		1000 // Far Clipping Plane
 	);
-	camera.position.set( -600, 100, -600 );
+	camera.position.set( -500, 100, 0 );
 	
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color( 0x000000 );
-	scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
 
 	// Lights
 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
-	dirLight.position.set( 0, 0, 1 ).normalize();
+	dirLight.position.set( -500, 100, 10 ).normalize();
 	scene.add( dirLight );
 
 	const pointLight = new THREE.PointLight( 0xffffff, 1.5 );
-	pointLight.position.set( 0, 100, 90 );
+	pointLight.position.set( -500, 100, 20 );
 	scene.add( pointLight );
 
 	const fontUrl = "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json";
 	const loader = new FontLoader();
 	loader.load( fontUrl , function ( font ) {
-		const textMaterial = new THREE.MeshBasicMaterial( 
+		const textMaterial = new THREE.MeshPhongMaterial( 
 		{
-			color: 0x2c3e50,
-			transparent: true,
-			opacity: 0.8,
-			side: THREE.DoubleSide
+			color: 0xFFFFFF,
+			flatShading: true,
+			side: THREE.DoubleSide,
+			reflectivity: 1,
+			shininess: 100,
+			emissive: 0x000000,
+			emissiveIntensity: 50
 		});
-		const textString = "Explore Music in a new way";
+		const textString = "Explore Music In A New Way";
 		const shapes = font.generateShapes( textString, 100 );
 		const geometry = new THREE.ShapeGeometry( shapes );
         geometry.computeBoundingBox();
@@ -62,7 +63,8 @@ function init(){
 		animate();
 	}); // End .load
 
-	renderer = new THREE.WebGLRenderer( {antialias: true} );
+	renderer = new THREE.WebGLRenderer( {alpha: true, antialias: true} );
+	renderer.setClearColor( 0x000000, 0 );
 	canvas.appendChild( renderer.domElement );
 	renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 	window.addEventListener( 'resize', onWindowResize, false );	
@@ -77,7 +79,7 @@ function onWindowResize() {
 
 function animate() {
 	requestAnimationFrame( animate );
-	textObj.rotation.y -= 0.01;
+	textObj.rotation.y -= 0.0055;
 	render();
 };
 
