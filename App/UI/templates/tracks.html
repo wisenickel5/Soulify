@@ -12,13 +12,15 @@ TopTracks
             <div class="col-12 col-lg-4">
                 <h1>Top Tracks</h1>
             </div>
-            <div class="col-12 col-lg-8">
+            <div class="text-right col-12 col-lg-8">
                 <p>
-                    Curate your most listened to tracks over the last month, 6 months, and all-time.
+                    Curate a playlist from the tracks you've 
+                    listened to the most over the previous month, six 
+                    months, and all time.
                 </p>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-12 col-lg-4">
                 <div class="form-content">
                     <ul class="form-list">
@@ -113,7 +115,7 @@ TopTracks
                         </button>
                         <form class="p-4" id="playlistForm">
                             <h1 class="modal-title text-center">Get your Top Tracks!</h1>
-                            <p class="modal-info">Soulify will create a Spotify playlist with your most played tracks for the selected time period.</p>
+                            <p class="modal-info">For the given time period, Soulify will construct a Spotify playlist with your most played songs.</p>
                             <div class="form-group">
                                 <div class="row ml-2 mb-4">
                                     <div class="col-sm-4 my-auto">
@@ -156,7 +158,7 @@ TopTracks
                                     </div>
                                 </div>
                             </div>
-                            <p class="modal-info">Your favorite music is always changing. Would you like Soulify to automatically sync and update your Most Played playlist(s)?</p>
+                            <p class="modal-info">Your favorite music is always evolving. Would you like Soulify to sync and update your Most Played playlist(s) automatically?</p>
                             <div class="form-group">
                                 <div class="form-check mb-4 text-center">
                                     <input type="checkbox" class="form-check-input" name="auto_update" id="autoUpdates" />
@@ -171,8 +173,18 @@ TopTracks
             </div>
         </div>
         <div class="row page-info">
-            <div class="col-12 col-lg-4">
-                <h1>Listening Analysis</h1>
+            <div class="row page-info">
+                <div class="text-left col-12 col-lg-4">
+                    <h1>Listening Analysis</h1>
+                </div>
+                <div class="text-right col-12 col-lg-8">
+                    <p>
+                        The following radar chart illustrates your 
+                        listening habits based on your top 25 favorite songs.
+                        To learn more about how this feature came to be, click 
+                        <a href="https://towardsdatascience.com/discovering-your-music-taste-with-python-and-spotify-api-b51b0d2744d" class="hyperlink-black">here</a>.
+                    </p>
+                </div>
             </div>
         </div>
         <div class = "row">
