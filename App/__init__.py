@@ -3,9 +3,10 @@ from flask_bootstrap import Bootstrap
 import config
 import os
 
-template_dir = os.path.abspath('../Soulify/App/templates/')
-static_dir = os.path.abspath('../Soulify/App/UI/static/')
-app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+#template_dir = os.path.abspath('../Soulify/App/templates/')
+#static_dir = os.path.abspath('../Soulify/App/static/')
+#app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+app = Flask(__name__)
 app.config.from_object(config)
 app.secret_key = app.config['CLIENT_SECRET']
 

@@ -457,8 +457,8 @@ def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
 	plt.ioff() # Turn Interactive Mode Off
 
 	# Saving Figure
-	img_dir = os.path.abspath("../Soulify/App/UI/static/")
-	radar_chart_file = os.path.abspath('../Soulify/App/UI/static/images/radar-chart.png')
+	img_dir = os.path.abspath("../Soulify/App/static/")
+	radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
 	# Check if the png exists, if it does delete it
 	if (os.path.isfile(radar_chart_file)):
 		os.remove(radar_chart_file)
