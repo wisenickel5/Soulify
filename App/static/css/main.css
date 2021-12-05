@@ -6,7 +6,7 @@ body {
   padding: 0;
   display: block;
   color: #000!important;
-  background: linear-gradient(330deg, #ffd89b 33%, #19547b 77%)!important;
+  background: linear-gradient(90deg, #ffd89b 0%, #8E978B 50%, #19547b 77%)!important;
 }
 
 div {
