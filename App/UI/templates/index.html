@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+
+{% block content %}
+
+<main role="main">
+
+<!-- Three JS -->
+<script defer type="module" src="../static/javascript/exploreMusic.js"></script>
+
+
+<div class="container-fluid" id="canvas-holder">
+	<div id="canvas"></div>
+</div>
+
+<div class="py-5 bg-light">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card mb-6 shadow-sm">
+					<a class="" href="/tracks"> 
+						<svg class="card-center card-img-top" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Top Tracks">
+							<defs>
+								<linearGradient id="gradient1" gradientTransform="rotate(90)">
+									<stop offset="0%" style="stop-color:#ffd89b;stop-opacity:1" />
+									<stop offset="50%" style="stop-color:#8E978B;stop-opacity:1" />
+									<stop offset="100%" style="stop-color:#19547b;stop-opacity:1" />
+								</linearGradient>
+							</defs>
+							<title>Soulify</title>
+							<rect width="100%" height="100%" fill="#000"/>
+							<text x="50%" y="50%" fill="#fff" font-size="2em" pointer-events="none">Top Tracks</text>
+						</svg>
+					</a>
+					<div class="card-body">
+						<p class="card-text">Find your most listened to songs.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card mb-6 shadow-sm">
+					<a class="" href="/create">
+						<svg class="card-center card-img-top" width="100%" height="225" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Top Tracks"><title>Soulify</title><rect width="100%" height="100%" fill="#000"/><text x="50%" y="50%" fill="#fff" font-size="2em" pointer-events="none">Find Tracks</text></svg>
+					</a>
+					<div class="card-body">
+						<p class="card-text">Add song names or artists to create a playlist.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
