@@ -456,10 +456,12 @@ def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
 	plt.yticks(color = 'grey', size = 15)
 	plt.ioff() # Turn Interactive Mode Off
 
-	# Saving Figure
-	img_dir = os.path.abspath("../Soulify/App/UI/static/")
-	radar_chart_file = os.path.abspath('../Soulify/App/UI/static/images/radar-chart.png')
-	# Check if the png exists, if it does delete it
-	if (os.path.isfile(radar_chart_file)):
-		os.remove(radar_chart_file)
-	fig.savefig(img_dir + "/images/radar-chart.png")
+	# Commenting out for now...
+	# # Saving Figure
+	# img_dir = os.path.abspath("../Soulify/App/static/")
+	# radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
+	# # Check if the png exists, if it does delete it
+	# if (os.path.isfile(radar_chart_file)):
+	# 	current_app.logger.info("About to try deleting existing radar chart png...")
+	# 	os.remove(radar_chart_file)
+	# fig.savefig(img_dir + "/images/radar-chart.png")
