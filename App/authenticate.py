@@ -96,7 +96,10 @@ def refreshToken(refresh_token):
 
 	# 200 code indicates access token was properly granted
 	if post_response.status_code == 200:
-		return post_response.json()['access_token'], post_response.json()['expires_in']
+		token = post_response.json()['access_token']
+		exp_time = post_response.json()['expires_in']
+		current_app.logger.info(f"Refresh Token: " + {token} + "\nExpiration time: " + {exp_time})
+		return token, exp_time
 	else:
 		logging.error('refreshToken:' + str(post_response.status_code))
 		return None
