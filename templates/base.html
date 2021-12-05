@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang ="en">
+    
+    <!DOCTYPE html>
+   
+    <head>
+        {% block head %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="author" content="KSU Group 1" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+        <link rel="shortcut icon" href="#" />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <title>{% block title %}{% endblock %} - Soulify</title>
+
+        {% endblock %}
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-md nav-scheme navbar-light">
+            <a class="navbar-brand logo" href="/" aria-label="Soulify home">
+<<<<<<< HEAD
+                <img src="...static/images/logo.png" alt="soulify-logo" id="logo" width="150" />
+=======
+                <img src="../static/images/logo.png" alt="soulify-logo" id="logo" width="75" />
+>>>>>>> dylan-branch
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tracks" aria-label="topTracks">
+                            <p>TOPTRACKS</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/create" aria-label="create">
+                            <p>CREATE</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/information" aria-label="information">
+                            <span class="icon-fa">
+                                <i class="fas fa-question-circle"></i>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <script type="text/javascript">
+            if ("{{error}}") {
+                alert("{{error}} Please try again.");
+            }
+        </script>
+    </body>
+
+    <footer class="bg-light" >
+        <div class="py-5 bg-light">
+        <div class="container py-5">
+            {% block footer %}{% endblock %}
+
+            <div class="row">
+                <div class="col-12 col-md">
+                    <p class="text-muted">Inspired by Spotify's Discover Weekly playlists, this website was designed to give Spotify users more versatility with their music.</p>
+                    <p class="text-muted"><strong>Disclaimer:</strong> Due to limitations with the Spotify SDK, this app will only work for Spotify premium users.</p>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-12 col-md">
+                    <a href="/" aria-label="Soulify home">
+                        <img src="...static/images/logo.png" alt="soulify-logo" id="logo" width="150" />
+                    </a>
+                    <small class="d-block mb-3 text-muted">2020</small>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Features</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="/tracks">Top Tracks</a></li>
+                        <li><a class="text-muted" href="/create">Create Playlist</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>About</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="/information">Privacy and Resources</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>We would love your feedback!</h5>
+                    <ul class="list-unstyled text-small">
+                        <li class="text-muted">
+                            <i class="fa fa-map-marker"></i>
+                            Atlanta, Georgia
+                        </li>
+                        <li class="text-muted">
+                            <i class="fa fa-envelope"></i>
+                            dalexa75@students.kennesaw.edu
+                            jbail182@students.kennesaw.edu
+                            ychawla@students.kennesaw.edu
+                        </li>
+                        <li class="text-muted">
+                            <i class="fas fa-user-tie"></i>
+                            KSU Group 1
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+    </footer>
+</html>
