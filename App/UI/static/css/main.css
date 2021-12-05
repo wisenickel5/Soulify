@@ -6,7 +6,7 @@ body {
   padding: 0;
   display: block;
   color: #000!important;
-  background: linear-gradient(349deg, #ffd89b 33%, #19547b 77%)!important;
+  background: linear-gradient(330deg, #ffd89b 33%, #19547b 77%)!important;
 }
 
 div {
@@ -86,10 +86,7 @@ li.nav-item {
 .jumbotron {
   padding: 6rem 1rem!important;
   margin-bottom: 0!important;
-  background-image: linear-gradient(
-    #19547b,
-    #ffd89b 
-    );
+  background-image: linear-gradient(330deg, #ffd89b 33%, #19547b 77%);
   background-size: cover;
   color: #fff !important;
   font-family: Montserrat,sans-serif;
@@ -286,70 +283,6 @@ footer p {
   margin: 6px 0 30px 0;
 }
 
-
-
-
-
-.clock {
-  padding: 0px;
-  list-style: none;
-  margin: 0px;
-  position: relative;
-  border: 3px solid white;
-  border-radius: 15px;
-  background-image: url("album_placeholder.JPG");
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.countdown-square {
-	background: rgba(10, 10, 10, 0.95);
-    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.1);
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.countdown-square span{
-	display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-}
-
-.countdown-square-big {
-    width: 200px;
-    height: 150px;
-}
-
-.countdown-square-big span{
-  font-size: 6rem;
-}
-
-@media (max-width: 466px) {
-.countdown-square-big {
-    width: 120px;
-    height: 90px;
-	}
-
-.countdown-square-big span {
-    font-size: 3.0rem!important;
-	}
-}
-
-.countdown-square-small {
-    width: 100px;
-    height: 75px;
-    margin-top: 20px;
-}
-
-.countdown-square-small {
-	font-size: 1rem;
-}
-
-.equalize {
-	margin-bottom: 125px;
-}
-
 #currentName {
 	font-size: 2rem;
 	overflow: hidden;
@@ -436,7 +369,12 @@ footer p {
   display: block;
   position: static;
   border: 2px solid black;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100vw;
+  height: 320px;
+}
+
+.container-fluid {
+  padding-right: 0% !important;
+  padding-left: 0% !important;
 }
 
