@@ -154,7 +154,7 @@ li.nav-item {
 }
 
 .faq-info {
-	color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
 	font-family: Montserrat,sans-serif;
 	display: flex;
   justify-content: center;
@@ -173,14 +173,10 @@ li.nav-item {
 }
 
 .faq-info h2{
-  font-size: 3em;
+  font-size: 2em;
   font-weight: 700;
 }
 
-.faq-info h3 {
-  font-size: 2em;
-  font-weight: 400;
-}
 
 .jumbotron .container {
   max-width: 45rem;
