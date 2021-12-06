@@ -21,6 +21,10 @@ i {
 	color: #000;
 }
 
+.container-sm{
+  background: white!important;
+}
+
 @media (min-width: 768px) {
   .navbar-brand.logo{
     position: absolute;
@@ -155,6 +159,34 @@ li.nav-item {
 
 .jumbotron .container {
   max-width: 45rem;
+}
+
+.faq-info {
+	color: rgb(104, 104, 104);
+	font-family: Montserrat,sans-serif;
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 30px;
+}
+
+.faq-info p {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.faq-info h1 {
+  font-size: 4em;
+  font-weight: 700;
+}
+
+.faq-info h2{
+  font-size: 2em;
+  font-weight: 700;
+}
+
+.faq-link-info a {
+  color: black !important;
 }
 
 footer {
