@@ -446,9 +446,12 @@ def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
 	plt.xticks(angles[:-1], catagories, size = 15)
 	plt.yticks(color = 'grey', size = 15)
 
-	plt.ioff()
-	plt.savefig('../static/images/radar-chart.png')
-	if (os.path.exists("../static/images/radar-chart.png")):
-		return True
-	else:
-		return False
+	# Commenting out for now...
+	# # Saving Figure
+	# img_dir = os.path.abspath("../Soulify/App/static/")
+	# radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
+	# # Check if the png exists, if it does delete it
+	# if (os.path.isfile(radar_chart_file)):
+	# 	current_app.logger.info("About to try deleting existing radar chart png...")
+	# 	os.remove(radar_chart_file)
+	# fig.savefig(img_dir + "/images/radar-chart.png")

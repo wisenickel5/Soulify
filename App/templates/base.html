@@ -30,6 +30,11 @@
 		<!-- Preview Meta -->
 		<meta property="og:title" content="Soulify" />
 		<meta property="og:image" content="../static/images/logo.png" />
+
+		<!-- Disable Mobile Zoom -->
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 		<title>{% block title %}{% endblock %} - Soulify</title>
 
 		{% endblock %}
@@ -37,7 +42,7 @@
 
 	<body>
 		<nav class="navbar navbar-expand-md nav-scheme navbar-dark">
-			<a class="navbar-brand logo" href="/" aria-label="Soulify home">
+			<a id="home-button" class="navbar-brand logo" href="/" aria-label="Soulify home">
 				<img src="../static/images/logo.png" alt="soulify-logo" id="logo" width="75" />
 			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +76,7 @@
 		<div id="content">
 			{% block content %}{% endblock %}
 		</div>
-
+		
 		<script type="text/javascript">
 			if ("{{error}}") {
 				alert("{{error}} Please try again.");
@@ -81,7 +86,7 @@
 
 	<footer class="bg-light" >
 		<div class="py-5 bg-light">
-			<div class="container">
+			<div class="container py-5">
 				{% block footer %}{% endblock %}
 
 				<div class="row">
