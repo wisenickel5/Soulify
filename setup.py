@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = "Soulify",
@@ -7,7 +7,7 @@ setup(
     description = "",
     author = "Dylan Alexander",
     author_email = "dalexa75@students.kennesaw.edu",
-    packages = [""],
+    packages = find_packages(),
     include_package_data = True,
     zip_safe = False,
     install_requires = [

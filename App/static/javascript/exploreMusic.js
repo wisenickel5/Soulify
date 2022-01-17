@@ -20,7 +20,7 @@ function init(){
 		0.1, // Near Clipping Plane
 		1000 // Far Clipping Plane
 	);
-	camera.position.set( -600, 100, 0 );
+	camera.position.set( -600, 200, 0 );
 	
 	// Scene
 	scene = new THREE.Scene();
@@ -47,15 +47,15 @@ function init(){
 			emissive: 0x000000,
 			emissiveIntensity: 100
 		});
-		const textString = "Explore Music In A New Way";
+		const textString = "Soulify";
 		const geometry = new TextGeometry( textString,
 		{
 			font: font,
-			size: 70,
+			size: 300,
 			height: 50,
 			curveSegments: 30,
-			bevelEnabled: false,
-			bevelThickness: 10,
+			bevelEnabled: true,
+			bevelThickness: 5,
 			bevelSize: 8,
 			bevelOffset: 0,
 			bevelSegments: 5
@@ -65,7 +65,7 @@ function init(){
         geometry.translate( xMid, 0, 0 );
 
 		textObj = new THREE.Mesh( geometry, textMaterial );
-		textObj.position.z = - 150;
+		textObj.position.z = - 50;
 		scene.add( textObj );
 
 		camera.lookAt(new THREE.Vector3( textObj.position.x, 0, textObj.position.z ));

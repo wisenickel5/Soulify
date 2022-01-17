@@ -2,8 +2,8 @@
 
 CLIENT_ID = '8c9ee97b95854163a250399fda32d350'
 CLIENT_SECRET = 'b5a659e4ccce47499fbb50db0d8cb97d'
-REDIRECT_URI = 'http://127.0.0.1:5000/callback' #Uncomment for testing
-#REDIRECT_URI = 'https://soulify.herokuapp.com/callback' #Uncomment for prod
+REDIRECT_URI = 'http://127.0.0.1:5000/callback' #Uncomment when testing
+#REDIRECT_URI = 'https://soulify.herokuapp.com/callback' #Uncomment when in production
 RESPONSE_TYPE = 'code'
 GRANT_TYPE = 'authorization_code'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
