@@ -88,7 +88,7 @@ def update_playlists():
 			if playlist is not None:
 				if db_clear_playlist(access_token, str(playlist)) is not None:
 					uri_list = db_get_top_tracks_uri(access_token, 'long_term', 50)
-					db_add_tracks_playlist(access_token, playlist, uri_list)
+					db_add_tracks_playlist(access_token, str(playlist), uri_list)
 					is_active = True
 				else:
 					user.playlist_id_long = None
@@ -453,10 +453,10 @@ def create_radar_chart(music_attributes: pd.DataFrame):
 	plt.yticks(color = 'grey', size = 15)
 	plt.ioff() # Turn Interactive Mode Off
 	# TODO: How can Radar Chart be saved on Heroku?
-	img_dir = os.path.abspath("../Soulify/App/static/")
-	radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
-	# Check if the png exists, if it does delete it
-	if os.path.isfile(radar_chart_file):
-		current_app.logger.info("Deleting existing Radar Chart png...")
-		os.remove(radar_chart_file)
-	fig.savefig(img_dir + "/images/radar-chart.png")
+	# img_dir = os.path.abspath("../Soulify/App/static/")
+	# radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
+	# # Check if the png exists, if it does delete it
+	# if os.path.isfile(radar_chart_file):
+	# 	current_app.logger.info("Deleting existing Radar Chart png...")
+	# 	os.remove(radar_chart_file)
+	# fig.savefig(img_dir + "/images/radar-chart.png")

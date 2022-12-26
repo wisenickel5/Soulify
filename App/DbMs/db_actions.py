@@ -95,14 +95,14 @@ def db_clear_playlist(access_token, playlist_id):
 	else:
 		return None
 
-def db_get_top_tracks_uri(access_token, time: int, limit: int=25):
+def db_get_top_tracks_uri(access_token, time: str, limit: int=25):
 	"""
 	Submits GET Request to Spotify API with resource to receive tracks
 	until a status code that equals 200 is received or log the error.
 
 	Args:
 		access_token:
-		time (int): Maximum number of tracks per request
+		time (str): Maximum number of tracks per request
 		limit (int): Maximum number of tracks per request
 
 	Returns:
