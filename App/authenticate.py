@@ -5,7 +5,7 @@ import time
 import random as rand
 import logging
 
-def createStateKey(size):
+def create_state_key(size):
 	"""Provides a state key for authorization request. To prevent forgery attacks, the state key
 	is used to make sure that the response comes from the same place that the request was sent from.
 	Reference: https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
@@ -18,7 +18,7 @@ def createStateKey(size):
 	"""
 	return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
-def getToken(code):
+def get_token(code):
 	"""Requests an access token from Spotify API. This function is only called if
 	the current user does not have a refresh token.
 
@@ -44,9 +44,9 @@ def getToken(code):
 	p_response = post_request.json()
 
 	# Log POST Response output in terminal
-	current_app.logger.info(f"\n\nCurrent code {code}")
-	current_app.logger.info(f'\n\nWisenickel:(getToken) Post Response Status Code -> {post_request.status_code}')
-	current_app.logger.info(f'\n\nPost Response Formatted -> {post_request}\n\n')
+	current_app.logger.debug(f"\n\nCurrent code {code}")
+	current_app.logger.debug(f'\n\n(getToken) Post Response Status Code -> {post_request.status_code}')
+	current_app.logger.debug(f'\n\nPost Response Formatted -> {post_request}\n\n')
 
 	if post_request.status_code == 200:
 		return p_response['access_token'], p_response['refresh_token'], p_response['expires_in']
@@ -54,7 +54,7 @@ def getToken(code):
 		logging.error('getToken: ' + str(post_request.status_code))
 		return None
 
-def checkTokenStatus(session):
+def check_token_status(session):
 	"""Determines if the new access token must be requested based on time expiration
 	of previous token.
 
@@ -65,11 +65,10 @@ def checkTokenStatus(session):
 		string: Success log
 	"""
 	payload = None
-
 	if time.time() > session['token_expiration']:
-		payload = refreshToken(session['refresh_token'])
+		payload = refresh_token(session['refresh_token'])
 
-	if payload != None:
+	if payload is not None:
 		session['token'] = payload[0]
 		session['token_expiration'] = time.time() + payload[1]
 	else:
@@ -77,12 +76,13 @@ def checkTokenStatus(session):
 		return None
 	return "Success"
 
-def refreshToken(refresh_token):
-	"""POST Request is made to Spotify API with refresh token (only if access token and
+def refresh_token(token):
+	"""
+	POST Request is made to Spotify API with refresh token (only if access token and
 	refresh token were previously acquired) creating a new access token
 
 	Args:
-		refresh_token (string)
+		token (string)
 
 	Returns:
 		tuple(str, str): Access Token, Expiration Time
@@ -91,22 +91,23 @@ def refreshToken(refresh_token):
 	authorization = current_app.config['AUTHORIZATION']
 
 	headers = {'Authorization': authorization, 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
-	body = {'refresh_token': refresh_token, 'grant_type': 'refresh_token'}
+	body = {'refresh_token': token, 'grant_type': 'refresh_token'}
 	post_response = requests.post(token_url, headers=headers, data=body)
 
 	# 200 code indicates access token was properly granted
 	if post_response.status_code == 200:
 		token = post_response.json()['access_token']
 		exp_time = post_response.json()['expires_in']
-		current_app.logger.info(f"Refresh Token: " + {token} + "\nExpiration time: " + {exp_time})
+		current_app.logger.info(f"Refresh Token: {token}\nExpiration time: {exp_time}")
 		return token, exp_time
 	else:
 		logging.error('refreshToken:' + str(post_response.status_code))
 		return None
 
-def makeGetRequest(session, url, params={}):
-	"""Recursively make GET Request to Spotify API with necessary headers
-	unitl a status code that equals 200 is recieved or log the error.
+def make_get_request(session, url, params={}):
+	"""
+	Recursively make GET Request to Spotify API with necessary headers
+	until a status code that equals 200 is received or log the error.
 
 	Args:
 		session (Session): Flask Session Object
@@ -122,19 +123,20 @@ def makeGetRequest(session, url, params={}):
 	get_response = requests.get(url, headers=headers, params=params)
 
 	# Log GET Response output in terminal
-	current_app.logger.info(f'\n\nWisenickel:(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
+	current_app.logger.debug(f'\n\n(makeGetRequest) GET Response Status Code -> {get_response.status_code}')
 
 	if get_response.status_code == 200:
 		return get_response.json()
-	elif get_response.status_code == 401 and checkTokenStatus(session) != None:
-		return makeGetRequest(session, url, params)
+	elif get_response.status_code == 401 and check_token_status(session) is not None:
+		return make_get_request(session, url, params)
 	else:
 		logging.error('makeGetRequests:' + str(get_response.status_code))
 		return None
 
-def makePutRequest(session, url, params={}, data={}):
-	"""Recursively make PUT Request to Spotify API with necessary headers
-	unitl a status code that equals 204, 403, 404 is recieved or log the error. 
+def make_put_request(session, url, params={}, data={}):
+	"""
+	Recursively make PUT Request to Spotify API with necessary headers
+	until a status code that equals 204, 403, 404 is received or log the error.
 
 	Args:
 		session (Session): Flask Session Object
@@ -148,20 +150,20 @@ def makePutRequest(session, url, params={}, data={}):
 	headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
 	response = requests.put(url, headers=headers, params=params, data=data)
 
-	# if request succeeds or specific errors occured, status code is returned
+	# if request succeeds or specific errors occurred, status code is returned
 	if response.status_code == 204 or response.status_code == 403 or response.status_code == 404 or response.status_code == 500:
 		return response.status_code
 
 	# if a 401 error occurs, update the access token
-	elif response.status_code == 401 and checkTokenStatus(session) != None:
-		return makePutRequest(session, url, data)
+	elif response.status_code == 401 and check_token_status(session) is not None:
+		return make_put_request(session, url, data)
 	else:
 		logging.error('makePutRequest:' + str(response.status_code))
 		return None
 
-def makePostRequest(session, url, data):
+def make_post_request(session, url, data):
 	"""Recursively make POST Request to Spotify API with resource to be created
-	unitl a status code that equals 201/204 is recieved or log the error.
+	until a status code that equals 201/204 is received or log the error.
 
 	Args:
 		session (Session): Flask Session Object
@@ -181,17 +183,18 @@ def makePostRequest(session, url, data):
 		return response
 
 	# if a 401 error occurs, update the access token
-	elif response.status_code == 401 and checkTokenStatus(session) != None:
-		return makePostRequest(session, url, data)
+	elif response.status_code == 401 and check_token_status(session) is not None:
+		return make_post_request(session, url, data)
 	elif response.status_code == 403 or response.status_code == 404:
 		return response.status_code
 	else:
 		logging.error('makePostRequest:' + str(response.status_code))
 		return None
 
-def makeDeleteRequest(session, url, data):
-	"""Recursively make DELETE Request to Spotify API with resource to be deleted
-	unitl a status code that equals 200 is recieved or log the error.
+def make_delete_request(session, url, data):
+	"""
+	Recursively make DELETE Request to Spotify API with resource to be deleted
+	until a status code that equals 200 is received or log the error.
 
 	Args:
 		session (Session): Flask Session Object
@@ -209,8 +212,8 @@ def makeDeleteRequest(session, url, data):
 		return response.json()
 
 	# if a 401 error occurs, update the access token
-	elif response.status_code == 401 and checkTokenStatus(session) != None:
-		return makeDeleteRequest(session, url, data)
+	elif response.status_code == 401 and check_token_status(session) is not None:
+		return make_delete_request(session, url, data)
 	else:
 		logging.error('makeDeleteRequest:' + str(response.status_code))
 		return None

@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 
 # Local Imports
 from flask import current_app
-from App.authenticate import (	makeGetRequest, makePostRequest, refreshToken)
-from App.DbMs.db_actions import (	dbAddTracksPlaylist, dbClearPlaylist,
-                        			dbGetTopTracksURI)
+from App.authenticate import (make_get_request, make_post_request, refresh_token)
+from App.DbMs.db_actions import (db_add_tracks_playlist, db_clear_playlist,
+								 db_get_top_tracks_uri)
 from App import Session
 from App.DbMs.user_operations import User
 
 
-def createPlaylist(session, playlist_name):
+def create_playlist(session, playlist_name):
 	"""Creates a group of a songs (playlist) with the parameter session and pulls the 
 	user inputted playlist name
 
@@ -32,14 +32,14 @@ def createPlaylist(session, playlist_name):
 	"""
 	url = 'https://api.spotify.com/v1/users/' + session['user_id'] + '/playlists'
 	data = "{\"name\":\"" + playlist_name + "\",\"description\":\"Created by Soulify\",\"public\":false}"
-	payload = makePostRequest(session, url, data)
+	payload = make_post_request(session, url, data)
 	current_app.logger.info(f'(createPlaylist) Payload: {payload}')
-	if payload == None:
+	if payload is None:
 		return None
 
 	return payload['id'], payload['uri']
 
-def updatePlaylists():
+def update_playlists():
 	"""Function to literally update playlists. Authorization with spotify is checked. Authorization 
 	with user is also checked to see if playlist is deleted or not. 
 
@@ -57,39 +57,38 @@ def updatePlaylists():
 		is_active = False
 
 		# authorize the application with Spotify API
-		payload = refreshToken(user.refresh_token)
+		payload = refresh_token(user.refresh_token)
 
 		# if user account has been removed or authorization revoked, user is deleted
-		if payload == None:
+		if payload is None:
 			session.delete(user)
 		else:		
 			access_token = payload[0]
 
 			playlist = user.playlist_id_short
-			if playlist != None:
-
+			if playlist is not None:
 				# if the playlist has not been deleted
-				if (dbClearPlaylist(access_token, playlist) != None):
-					uri_list = dbGetTopTracksURI(access_token, 'short_term', 50)
-					dbAddTracksPlaylist(access_token, playlist, uri_list)
+				if db_clear_playlist(access_token, str(playlist)) is not None:
+					uri_list = db_get_top_tracks_uri(access_token, 'short_term', 50)
+					db_add_tracks_playlist(access_token, str(playlist), uri_list)
 					is_active = True
 				else:
 					user.playlist_id_short = None
 
 			playlist = user.playlist_id_medium
-			if playlist != None:
-				if (dbClearPlaylist(access_token, playlist) != None):
-					uri_list = dbGetTopTracksURI(access_token, 'medium_term', 50)
-					dbAddTracksPlaylist(access_token, playlist, uri_list)
+			if playlist is not None:
+				if db_clear_playlist(access_token, str(playlist)) is not None:
+					uri_list = db_get_top_tracks_uri(access_token, 'medium_term', 50)
+					db_add_tracks_playlist(access_token, str(playlist), uri_list)
 					is_active = True
 				else:
 					user.playlist_id_medium = None
 
 			playlist = user.playlist_id_long
-			if playlist != None:
-				if (dbClearPlaylist(access_token, playlist) != None):
-					uri_list = dbGetTopTracksURI(access_token, 'long_term', 50)
-					dbAddTracksPlaylist(access_token, playlist, uri_list)
+			if playlist is not None:
+				if db_clear_playlist(access_token, str(playlist)) is not None:
+					uri_list = db_get_top_tracks_uri(access_token, 'long_term', 50)
+					db_add_tracks_playlist(access_token, playlist, uri_list)
 					is_active = True
 				else:
 					user.playlist_id_long = None
@@ -103,8 +102,8 @@ def updatePlaylists():
 
 	logging.info('Updated TopTracks Playlists')
 
-def addTracksPlaylist(session, playlist_id, uri_list):
-	"""Using the spotify API to add sigular tracks to a playlist. 
+def add_tracks_playlist(session, playlist_id, uri_list):
+	"""Using the spotify API to add singular tracks to a playlist.
 
 	Args:
 		session (Session): Flask Session Object
@@ -114,18 +113,18 @@ def addTracksPlaylist(session, playlist_id, uri_list):
 	Return: 
 		No return. 
 	"""
-	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
+	url = 'https://api.spotify.com/v1/playlists/' + str(playlist_id) + '/tracks'
 
 	uri_str = ""
 	for uri in uri_list:
 		uri_str += "\"" + uri + "\","
 
 	data = "{\"uris\": [" + uri_str[0:-1] + "]}"
-	makePostRequest(session, url, data)
+	make_post_request(session, url, data)
 
 	return
 
-def getTracksPlaylist(session, playlist_id, limit=100):
+def get_tracks_playlist(session, playlist_id, limit=100):
 	"""Get function which uses the spotify API along as the playlist ID in order to get all the 
 	tracks from the playlist.
 
@@ -138,7 +137,7 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 	Returns:
 		[type]: Track uri 
 	"""
-	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
+	url = 'https://api.spotify.com/v1/playlists/' + str(playlist_id) + '/tracks'
 
 	offset = 0
 	track_uri = []
@@ -147,9 +146,9 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 	total = 1
 	while total > offset:
 		params = {'limit': limit, 'fields': 'total,items(track(uri))', 'offset': offset}
-		payload = makeGetRequest(session, url, params)
+		payload = make_get_request(session, url, params)
 
-		if payload == None:
+		if payload is None:
 			return None
 		
 		for item in payload['items']:
@@ -160,7 +159,7 @@ def getTracksPlaylist(session, playlist_id, limit=100):
 
 	return track_uri
 
-def getAllTopTracks(session, limit=10):
+def get_all_top_tracks(session, limit=10):
 	"""Creates a list of tracks which are in the top 10 in the spotify API list. 
 
 	Args:
@@ -178,9 +177,9 @@ def getAllTopTracks(session, limit=10):
 		track_range_ids = []
 
 		params = {'limit': limit, 'time_range': time}
-		payload = makeGetRequest(session, url, params)
+		payload = make_get_request(session, url, params)
 
-		if payload == None:
+		if payload is None:
 			return None
 
 		for track in payload['items']:
@@ -190,7 +189,7 @@ def getAllTopTracks(session, limit=10):
 
 	return track_ids
 
-def getTopTracksID(session, time, limit=25):
+def get_top_tracks_id(session, time, limit=25):
 	"""Creates a list of tracks which are top 25 on the spotify API list.
 
 	Args:
@@ -203,9 +202,9 @@ def getTopTracksID(session, time, limit=25):
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
-	payload = makeGetRequest(session, url, params)
+	payload = make_get_request(session, url, params)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	track_ids = []
@@ -214,7 +213,7 @@ def getTopTracksID(session, time, limit=25):
 
 	return track_ids
 
-def getTopTracksURI(session, time, limit=25):  
+def get_top_tracks_uri(session, time, limit=25):
 	"""[summary]
 
 	Args:
@@ -227,9 +226,9 @@ def getTopTracksURI(session, time, limit=25):
 	"""
 	url = 'https://api.spotify.com/v1/me/top/tracks'
 	params = {'limit': limit, 'time_range': time}
-	payload = makeGetRequest(session, url, params)
+	payload = make_get_request(session, url, params)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	track_uri = []
@@ -238,7 +237,7 @@ def getTopTracksURI(session, time, limit=25):
 
 	return track_uri
 
-def getTopArtists(session, time, limit=10):
+def get_top_artists(session, time, limit=10):
 	"""[summary]
 
 	Args:
@@ -251,9 +250,9 @@ def getTopArtists(session, time, limit=10):
 	"""
 	url = 'https://api.spotify.com/v1/me/top/artists'
 	params = {'limit': limit, 'time_range': time}
-	payload = makeGetRequest(session, url, params)
+	payload = make_get_request(session, url, params)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	artist_ids = []
@@ -262,13 +261,13 @@ def getTopArtists(session, time, limit=10):
 
 	return artist_ids
 
-def getRecommendedTracks(session, search, tuneable_dict, limit=25):
+def get_recommended_tracks(session, search, tunable_dict, limit=25):
 	"""This call pulls the top 25 tracks which are directed to a playlist. 
 
 	Args:
 		session (Session): Flask Session Object
 		search ([type]): [description]
-		tuneable_dict (dict): 
+		tunable_dict (dict):
 		limit (int, optional): Number of tracks which the call will pull. Defaults to 25.
 
 	Returns:
@@ -288,10 +287,10 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 
 	url = 'https://api.spotify.com/v1/recommendations'
 	params = {'limit': limit, 'seed_tracks': track_ids[0:-1], 'seed_artists': artist_ids[0:-1]}
-	params.update(tuneable_dict)
-	payload = makeGetRequest(session, url, params)
+	params.update(tunable_dict)
+	payload = make_get_request(session, url, params)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	rec_track_uri = []
@@ -301,12 +300,12 @@ def getRecommendedTracks(session, search, tuneable_dict, limit=25):
 
 	return rec_track_uri
 
-def getLikedTrackIds(session):
+def get_liked_track_ids(session):
 
 	url = 'https://api.spotify.com/v1/me/tracks'
-	payload = makeGetRequest(session, url)
+	payload = make_get_request(session, url)
 
-	if payload == None:
+	if payload is None:
 		return None
 	
 	liked_tracks_ids = []
@@ -318,7 +317,7 @@ def getLikedTrackIds(session):
 	
 	return liked_tracks_ids
 
-def searchSpotify(session, search, limit=4):
+def search_spotify(session, search, limit=4):
 	"""Searches the entire spotify library using the spotify API call
 
 	Args:
@@ -331,9 +330,9 @@ def searchSpotify(session, search, limit=4):
 	"""
 	url = 'https://api.spotify.com/v1/search'
 	params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
-	payload = makeGetRequest(session, url, params)
+	payload = make_get_request(session, url, params)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	# response includes both artist and track names
@@ -354,7 +353,7 @@ def searchSpotify(session, search, limit=4):
 		results.append([full_name[0:-2], 't:' + item['id'], item['popularity']])
 
 
-	# sort them by popularity (highest first)
+	# sort them by popularity (the highest first)
 	results.sort(key=lambda x: int(x[2]), reverse=True)
 
 	results_json = []
@@ -363,18 +362,18 @@ def searchSpotify(session, search, limit=4):
 
 	return results_json
 
-def likedTrackIdsDataFrame(liked_track_ids):
+def liked_track_ids_df(liked_track_ids):
 	ccm = SpotifyClientCredentials(current_app.config['CLIENT_ID'], current_app.config['CLIENT_SECRET'])
 	sp = spotipy.Spotify(client_credentials_manager=ccm)
 	
 	song_meta = {'id':[], 'album':[], 'name':[],
 				'artist':[], 'explicit':[], 'popularity':[]}
 	
-	for id in liked_track_ids:
-		meta = sp.track(id) # Get songs meta data
+	for song_id in liked_track_ids:
+		meta = sp.track(song_id) # Get songs meta data
 
 		# Song Id
-		song_meta['id'].append(id)
+		song_meta['id'].append(song_id)
 
 		# Album Name
 		album = meta['album']['name']
@@ -417,7 +416,7 @@ def likedTrackIdsDataFrame(liked_track_ids):
 
 	return features_df
 
-def normalizeDf(features_df: pd.DataFrame) -> pd.DataFrame:
+def normalize_df(features_df: pd.DataFrame) -> pd.DataFrame:
 	music_attributes = features_df.filter([	'danceability', 'energy', 'loudness',
 											'speechiness', 'acousticness', 'instrumentalness'
 											'liveness', 'valence', 'tempo', 'duration'],
@@ -433,35 +432,31 @@ def normalizeDf(features_df: pd.DataFrame) -> pd.DataFrame:
 	current_app.logger.info(print(music_attributes))
 	return music_attributes
 
-def createRadarChart(music_attributes: pd.DataFrame) -> pd.DataFrame:
+def create_radar_chart(music_attributes: pd.DataFrame):
 	# Set Plot Attributes
 	plt.style.use('dark_background')
 	fig = plt.figure(figsize=(12,8))
 	ax = fig.add_subplot(111, projection="polar") # Axes Subplot
 	# Convert Column names to a list
-	catagories = list(music_attributes.columns)
-	# Number of catagories
-	N = len(catagories)
+	categories = list(music_attributes.columns)
 	value = list(music_attributes.mean())
 	value += value[:1]
 
 	# Angles for each category
-	angles=[n / float(N) * 2 * math.pi for n in range(N)]
-	angles+=angles[:1]
+	angles=[n / float(len(categories)) * 2 * math.pi for n in range(len(categories))]
+	angles += angles[:1]
 
 	# Plot
 	plt.polar(angles, value)
 	plt.fill(angles, value, alpha = 0.3)
-	plt.xticks(angles[:-1], catagories, size = 15)
+	plt.xticks(angles[:-1], categories, size = 15)
 	plt.yticks(color = 'grey', size = 15)
 	plt.ioff() # Turn Interactive Mode Off
-
-	# Commenting out for now...
-	# # Saving Figure
-	# img_dir = os.path.abspath("../Soulify/App/static/")
-	# radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
-	# # Check if the png exists, if it does delete it
-	# if (os.path.isfile(radar_chart_file)):
-	# 	current_app.logger.info("About to try deleting existing radar chart png...")
-	# 	os.remove(radar_chart_file)
-	# fig.savefig(img_dir + "/images/radar-chart.png")
+	# TODO: How can Radar Chart be saved on Heroku?
+	img_dir = os.path.abspath("../Soulify/App/static/")
+	radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
+	# Check if the png exists, if it does delete it
+	if os.path.isfile(radar_chart_file):
+		current_app.logger.info("Deleting existing Radar Chart png...")
+		os.remove(radar_chart_file)
+	fig.savefig(img_dir + "/images/radar-chart.png")

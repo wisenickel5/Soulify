@@ -1,8 +1,9 @@
 import requests
 
-def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
-	"""Submits ADD Request to Spotify API with resource to be added
-	unitl a status code that equals 201 is recieved or log the error.
+def db_add_tracks_playlist(access_token, playlist_id, uri_list):
+	"""
+	Submits ADD Request to Spotify API with resource to be added
+	until a status code that equals 201 is received or log the error.
 
 	Args:
 		access_token (str): Key used for authorization check
@@ -28,11 +29,14 @@ def dbAddTracksPlaylist(access_token, playlist_id, uri_list):
 	else:
 		return None
 
-def dbGetTracksPlaylist(access_token, playlist_id, limit=100):
-	"""Submits GET Request to Spotify API with resource to recieve tracks
-	unitl a status code that equals 200 is recieved or log the error.
+def db_get_tracks_playlist(access_token, playlist_id, limit=100):
+	"""
+	Submits GET Request to Spotify API with resource to receive tracks
+	until a status code that equals 200 is received or log the error.
 
 	Args:
+		access_token:
+		playlist_id:
 		limit (int): Maximum number of tracks per request
 
 	Returns:
@@ -64,9 +68,10 @@ def dbGetTracksPlaylist(access_token, playlist_id, limit=100):
 
 	return track_uri
 
-def dbClearPlaylist(access_token, playlist_id):
-	"""Submits DELETE Request to Spotify API with resource to remove tracks
-	unitl a status code that equals 200 is recieved or log the error.
+def db_clear_playlist(access_token, playlist_id):
+	"""
+	Submits DELETE Request to Spotify API with resource to remove tracks
+	until a status code that equals 200 is received or log the error.
 
 	Args:
 		access_token (str): Key used for authorization check
@@ -75,7 +80,7 @@ def dbClearPlaylist(access_token, playlist_id):
 		string : Success log
 	"""
 	url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
-	uri_list = dbGetTracksPlaylist(access_token, playlist_id)
+	uri_list = db_get_tracks_playlist(access_token, playlist_id)
 
 	uri_str = ""
 	for uri in uri_list:
@@ -90,11 +95,13 @@ def dbClearPlaylist(access_token, playlist_id):
 	else:
 		return None
 
-def dbGetTopTracksURI(access_token, time, limit=25):
-	"""Submits GET Request to Spotify API with resource to recieve tracks
-	unitl a status code that equals 200 is recieved or log the error.
+def db_get_top_tracks_uri(access_token, time: int, limit: int=25):
+	"""
+	Submits GET Request to Spotify API with resource to receive tracks
+	until a status code that equals 200 is received or log the error.
 
 	Args:
+		access_token:
 		time (int): Maximum number of tracks per request
 		limit (int): Maximum number of tracks per request
 

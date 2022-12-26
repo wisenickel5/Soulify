@@ -1,6 +1,5 @@
 import logging
 import time
-import os
 
 # Flask Imports
 from flask import (	jsonify, make_response, 
@@ -8,14 +7,14 @@ from flask import (	jsonify, make_response,
                    	request, session	)
 
 # Local Imports
-from App.authenticate import createStateKey, getToken
+from App.authenticate import create_state_key, get_token
 from flask import current_app
 from App import app
-from App.services import (	addTracksPlaylist, createPlaylist, getAllTopTracks,
-                      		getRecommendedTracks, getTopTracksURI,searchSpotify,
-					  		createRadarChart, getLikedTrackIds, likedTrackIdsDataFrame,
-					  		normalizeDf	)
-from App.DbMs.user_operations import (addUser, getUserInformation)
+from App.services import (add_tracks_playlist, create_playlist, get_all_top_tracks,
+						  get_recommended_tracks, get_top_tracks_uri, search_spotify,
+						  create_radar_chart, get_liked_track_ids, liked_track_ids_df,
+						  normalize_df)
+from App.DbMs.user_operations import (add_user, get_user_information)
 
 @app.route('/')
 @app.route('/index')
@@ -37,7 +36,7 @@ def authorize():
 	scope = current_app.config['SCOPE']
 
 	# state key used to protect against cross-site forgery attacks
-	state_key = createStateKey(15)
+	state_key = create_state_key(15)
 	session['state_key'] = state_key
 
 	# redirect user to Spotify authorization page
@@ -65,7 +64,7 @@ def callback():
 		session.pop('state_key', None)
 
 		# get access token to make requests on behalf of the user
-		payload = getToken(code)
+		payload = get_token(code)
 		#app.logger.info(f'(Callback) Payload: {payload}')
 		if payload != None:
 			session['token'] = payload[0]
@@ -74,7 +73,7 @@ def callback():
 		else:
 			return render_template('index.html', error='Failed to access token.')
 
-	current_user = getUserInformation(session)
+	current_user = get_user_information(session)
 	session['user_id'] = current_user['id']
 	logging.info('new user:' + session['user_id'])
 
@@ -91,8 +90,8 @@ def information():
 @app.route('/tracks',  methods=['GET'])
 def tracks():
 	"""
-	This page shows most played tracks by the user over many differnet 
-	time peiords.
+	This page shows most played tracks by the user over multiple
+	time periods.
 	"""
 	# make sure application is authorized for user 
 	if session.get('token') == None or session.get('token_expiration') == None:
@@ -101,20 +100,20 @@ def tracks():
 
 	# collect user information
 	if session.get('user_id') == None:
-		current_user = getUserInformation(session)
+		current_user = get_user_information(session)
 		session['user_id'] = current_user['id']
 
-	top_track_ids = getAllTopTracks(session)
+	top_track_ids = get_all_top_tracks(session)
 	#if top_track_ids == None:
 		#return render_template('index.html', error='Failed to gather top tracks.')
 
-	liked_track_ids = getLikedTrackIds(session)
+	liked_track_ids = get_liked_track_ids(session)
 	if liked_track_ids == None:
 		return render_template('index.html', error='Failed to get liked tracks')
 	elif liked_track_ids != None:
-		lt_df = likedTrackIdsDataFrame(liked_track_ids)
-		music_attributes = normalizeDf(lt_df)
-		createRadarChart(music_attributes)
+		lt_df = liked_track_ids_df(liked_track_ids)
+		music_attributes = normalize_df(lt_df)
+		create_radar_chart(music_attributes)
 		
 	return render_template('tracks.html', track_ids=top_track_ids)
 	
@@ -122,7 +121,7 @@ def tracks():
 def create():
 	"""
 	This feature allows the user to create a 
-	plalist by searching song title/artist.
+	playlist by searching song title/artist.
 	"""
 	# make sure application is authorized for user 
 	if session.get('token') == None or session.get('token_expiration') == None:
@@ -131,7 +130,7 @@ def create():
 
 	# collect user information
 	if session.get('user_id') == None:
-		current_user = getUserInformation(session)
+		current_user = get_user_information(session)
 		session['user_id'] = current_user['id']
 
 	return render_template('create.html')
@@ -140,7 +139,7 @@ def create():
 def createTopPlaylist():
 	"""
 	Activates whenever the user saves a new playlist in which, creates 
-	another new enity of playlists and stores new tracks.
+	another new entity of playlists and stores new tracks.
 	also when the user chooses to autoupdate the playlist, the ids are 
 	stored into the data to be updated in the future 
 	"""
@@ -153,23 +152,23 @@ def createTopPlaylist():
 
 	# create playlist, then get TopTracks, then fill playlist with TopTracks
 	if 'short_term' in request.form:
-		playlist_id_short, playlist_uri = createPlaylist(session, request.form['short_term_name'])
-		uri_list = getTopTracksURI(session, 'short_term', 50)
-		addTracksPlaylist(session, playlist_id_short, uri_list)
+		playlist_id_short, playlist_uri = create_playlist(session, request.form['short_term_name'])
+		uri_list = get_top_tracks_uri(session, 'short_term', 50)
+		add_tracks_playlist(session, playlist_id_short, uri_list)
 
 	if 'medium_term' in request.form:
-		playlist_id_medium, playlist_uri =  createPlaylist(session, request.form['medium_term_name'])
-		uri_list = getTopTracksURI(session, 'medium_term', 50)
-		addTracksPlaylist(session, playlist_id_medium, uri_list)
+		playlist_id_medium, playlist_uri =  create_playlist(session, request.form['medium_term_name'])
+		uri_list = get_top_tracks_uri(session, 'medium_term', 50)
+		add_tracks_playlist(session, playlist_id_medium, uri_list)
 
 	if 'long_term' in request.form:
-		playlist_id_long, playlist_uri = createPlaylist(session, request.form['long_term_name'])
-		uri_list = getTopTracksURI(session, 'long_term', 50)
-		addTracksPlaylist(session, playlist_id_long, uri_list)
+		playlist_id_long, playlist_uri = create_playlist(session, request.form['long_term_name'])
+		uri_list = get_top_tracks_uri(session, 'long_term', 50)
+		add_tracks_playlist(session, playlist_id_long, uri_list)
 
 	# if user selects autoupdate, add them to the database
 	if 'auto_update' in request.form:
-		addUser(session['user_id'], session['refresh_token'], playlist_id_short=playlist_id_short, playlist_id_medium=playlist_id_medium, playlist_id_long=playlist_id_long)
+		add_user(session['user_id'], session['refresh_token'], playlist_id_short=playlist_id_short, playlist_id_medium=playlist_id_medium, playlist_id_long=playlist_id_long)
 
 	# send back the created playlist URI so the user is redirected to Spotify
 	return playlist_uri
@@ -206,9 +205,9 @@ def createSelectedPlaylist():
 	if 'valence_level' in request.form:
 		tuneable_dict.update({'valence': request.form['slider_valence']})
 
-	playlist_id, playlist_uri = createPlaylist(session, request.form['playlist_name'])
-	uri_list = getRecommendedTracks(session, search, tuneable_dict)
-	addTracksPlaylist(session, playlist_id, uri_list)
+	playlist_id, playlist_uri = create_playlist(session, request.form['playlist_name'])
+	uri_list = get_recommended_tracks(session, search, tuneable_dict)
+	add_tracks_playlist(session, playlist_id, uri_list)
 
 	# send back the created playlist URI so the user is redirected to Spotify
 	return playlist_uri
@@ -217,10 +216,10 @@ def createSelectedPlaylist():
 def autocomplete():
 	"""
 	Activates as the user types into search bar in the create feature
-	it automatically finishes the statmnent for user an sends back possible 
+	it automatically finishes the statement for user and sends back possible
 	outcomes.
 	"""
 	search = request.args.get('q')
-	results = searchSpotify(session, search)
+	results = search_spotify(session, search)
 
 	return jsonify(matching_results=results)

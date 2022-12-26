@@ -1,13 +1,13 @@
 from App import Base, Session
 import logging
-from App.authenticate import makeGetRequest
+from App.authenticate import make_get_request
 from sqlalchemy import Column, Integer, String
 
 class User(Base):
 	__tablename__ = 'users'
 	id = Column(Integer, primary_key=True)
 	username = Column(String(64), index=True, unique=True)
-	refreshToken = Column(String(150), index=True, unique=True)
+	refresh_token = Column(String(150), index=True, unique=True)
 	playlist_id_short = Column(String(30), index=True, unique=True)
 	playlist_id_medium = Column(String(30), index=True, unique=True)
 	playlist_id_long = Column(String(30), index=True, unique=True)
@@ -16,7 +16,7 @@ class User(Base):
 	def __repr__(self):
 		return '<User {}>'.format(self.username)
 
-def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=None, playlist_id_long=None):
+def add_user(username, refresh_token, playlist_id_short=None, playlist_id_medium=None, playlist_id_long=None):
 	"""Function called when a user signs up for a new TopTracks playlist. If the user is new, 
 	then a new row is created with the appropriate column information. If the user already exists 
 	in the table, then only the playlist IDs are updated
@@ -24,9 +24,9 @@ def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=
 	Args:
 		username (string): the username that is store in the User table in the database
 		refresh_token (string): the refresh_token that is store in the User table in the database
-		playlist_id_short (string): The plalist_id that is stored in the User table in the database for new users 
-		playlist_id_medium (string): The plalist_id that is stored in the User table in the database for new users
-		playlist_id_long (string): The plalist_id that is stored in the User table in the database for new users
+		playlist_id_short (string): The playlist_id that is stored in the User table in the database for new users
+		playlist_id_medium (string): The playlist_id that is stored in the User table in the database for new users
+		playlist_id_long (string): The playlist_id that is stored in the User table in the database for new users
 
 	Returns:
 		str: username
@@ -35,8 +35,9 @@ def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=
 	id_exists = session.query(User.id).filter_by(username=username).scalar()
 
 	# new user
-	if id_exists == None:
-		user = User(username=username, refresh_token=refresh_token, playlist_id_short=playlist_id_short, playlist_id_medium=playlist_id_medium, playlist_id_long=playlist_id_long)
+	if id_exists is None:
+		user = User(username=username, refresh_token=refresh_token, playlist_id_short=playlist_id_short,
+					playlist_id_medium=playlist_id_medium, playlist_id_long=playlist_id_long)
 		session.add(user)
 		logging.info('New auto user: ' + username)
 
@@ -46,17 +47,17 @@ def addUser(username, refresh_token, playlist_id_short=None, playlist_id_medium=
 		logging.info('Auto user updated: ' + user.username)
 
 		# only update playlist IDs that are new
-		if playlist_id_short != None:
+		if playlist_id_short is not None:
 			user.playlist_id_short = playlist_id_short
-		if playlist_id_medium != None:
+		if playlist_id_medium is not None:
 			user.playlist_id_medium = playlist_id_medium
-		if playlist_id_long != None:
+		if playlist_id_long is not None:
 			user.playlist_id_long = playlist_id_long
 
 	session.commit()
 	session.close()
 
-def getUserInformation(session):
+def get_user_information(session):
 	"""Gets user information such as username, user ID, and user location
 
 	Args:
@@ -66,9 +67,9 @@ def getUserInformation(session):
 		dict : JSON Response
 	"""
 	url = 'https://api.spotify.com/v1/me'
-	payload = makeGetRequest(session, url)
+	payload = make_get_request(session, url)
 
-	if payload == None:
+	if payload is None:
 		return None
 
 	return payload

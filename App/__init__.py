@@ -24,12 +24,12 @@ Base.metadata.create_all(engine)
 # Schedule updates for the TopTracks playlists
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from App.services import updatePlaylists
+from App.services import update_playlists
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 scheduler = AsyncIOScheduler()
-scheduler.add_job(updatePlaylists, trigger='interval', days=1)
+scheduler.add_job(update_playlists, trigger='interval', days=1)
 scheduler.start()
 
 from App import routes
