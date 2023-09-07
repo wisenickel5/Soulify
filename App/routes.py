@@ -50,8 +50,8 @@ def authorize():
 @app.route('/callback')
 def callback():
 	"""
-	Called after a new user has authorized the application through the Spotift API page.
-	Stores user information in a session and redirects user back to the page they initally
+	Called after a new user has authorized the application through the Spotify API page.
+	Stores user information in a session and redirects user back to the page they initially
 	attempted to visit.
 	"""
 	# make sure the response came from Spotify
@@ -66,7 +66,7 @@ def callback():
 		# get access token to make requests on behalf of the user
 		payload = get_token(code)
 		#app.logger.info(f'(Callback) Payload: {payload}')
-		if payload != None:
+		if payload is not None:
 			session['token'] = payload[0]
 			session['refresh_token'] = payload[1]
 			session['token_expiration'] = time.time() + payload[2]
@@ -94,12 +94,12 @@ def tracks():
 	time periods.
 	"""
 	# make sure application is authorized for user 
-	if session.get('token') == None or session.get('token_expiration') == None:
+	if session.get('token') is None or session.get('token_expiration') is None:
 		session['previous_url'] = '/tracks'
 		return redirect('/authorize')
 
 	# collect user information
-	if session.get('user_id') == None:
+	if session.get('user_id') is None:
 		current_user = get_user_information(session)
 		session['user_id'] = current_user['id']
 
@@ -108,9 +108,9 @@ def tracks():
 		#return render_template('index.html', error='Failed to gather top tracks.')
 
 	liked_track_ids = get_liked_track_ids(session)
-	if liked_track_ids == None:
+	if liked_track_ids is None:
 		return render_template('index.html', error='Failed to get liked tracks')
-	elif liked_track_ids != None:
+	elif liked_track_ids is not None:
 		lt_df = liked_track_ids_df(liked_track_ids)
 		music_attributes = normalize_df(lt_df)
 		create_radar_chart(music_attributes)
