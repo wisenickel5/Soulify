@@ -9,8 +9,41 @@ version >= 3.10.0 is being used. The Python community recommends setting up
 PyEnv to manage different versions of Python on your machine, see here: 
 https://realpython.com/intro-to-pyenv/
 
-Once the version is set, and the repository has been cloned locally, create a 
-new directory called `venv` and `cd` into it. Then run the following command:
+### _Windows_
+
+Open a PowerShell session "As an Administrator" and run the following command to allow the execution of scripts:
+```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+```
+
+Then run the following command to install PyEnv:
+```
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+```
+
+Once PyEnv has been successfully installed, close out of that PowerShell session and open a new session. In the new session, run the following command to ensure PyEnv was installed properly (you should see a PyEnv help menu):
+```
+pyenv help
+```
+
+Next we'll install a version of Python compatible with the Soulify project
+```
+pyenv install 3.10.0
+```
+
+And now set the previously installed version of Python to be used "Globally"
+```
+pyenv global 3.10.0
+```
+
+For peace of mind, we can run the following command to test that the global version of Python was setup properly (There are hundreds of test to be run this may take a while...) Feel free to `Ctrl + C` out of the tests after a bunch have passed.
+```
+python -m test
+```
+
+---
+
+Once the version is set, and the repository has been cloned locally, create a new directory called `venv` and `cd` into it. Then run the following command:
 
 ```
 python -m venv .
