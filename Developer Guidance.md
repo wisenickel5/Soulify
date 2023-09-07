@@ -72,13 +72,6 @@ pip install -r requirements.txt
 You'll know you have set up the virtual environment properly when you have a folder called
 `venv` in the root of the Soulify project.
 
-The `scikit-learn` package must also be installed but doing so from the `requirements.txt`
-may cause some issues. Run the following command after all other dependencies have been
-installed successfully:
-```
-pip install scikit-learn
-```
-
 ---
 
 ## Running Soulify Locally
