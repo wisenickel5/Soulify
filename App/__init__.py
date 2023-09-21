@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
+#from extensions import bootstrap, scheduler
 import config
 
 app = Flask(__name__)
 app.config.from_object(config)
 app.secret_key = app.config['CLIENT_SECRET']
-
+"""
 # Initialize the Soulify DB
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -17,8 +18,8 @@ Base = declarative_base()
 # Creating User Table:
 # The User Model needs to be imported before
 # the .create_all() function is called
-from App.DbMs.user_operations import User
-Base.metadata.create_all(engine)
+from App.database_management.user_operations import User
+Base.metadata.create_all(engine)"""
 
 # Schedule updates for the TopTracks playlists
 import asyncio
