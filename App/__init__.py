@@ -1,11 +1,15 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 #from extensions import bootstrap, scheduler
+from App.scheduler import init_scheduler
+from App.database import init_db
 import config
 
 app = Flask(__name__)
 app.config.from_object(config)
 app.secret_key = app.config['CLIENT_SECRET']
+
+init_db()
 """
 # Initialize the Soulify DB
 from sqlalchemy import create_engine
@@ -20,7 +24,7 @@ Base = declarative_base()
 # the .create_all() function is called
 from App.database_management.user_operations import User
 Base.metadata.create_all(engine)"""
-
+"""
 # Schedule updates for the TopTracks playlists
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -31,6 +35,8 @@ asyncio.set_event_loop(loop)
 scheduler = AsyncIOScheduler()
 scheduler.add_job(update_playlists, trigger='interval', days=1)
 scheduler.start()
+"""
+init_scheduler()
 
 from App import routes
 bootstrap = Bootstrap(app)

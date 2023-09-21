@@ -7,5 +7,6 @@ engine = create_engine('sqlite:///:memory:', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
-from App.database_management.user_operations import User
-Base.metadata.create_all(engine)
+def init_db():
+    from App.database_management.user_operations import User
+    Base.metadata.create_all(engine)
