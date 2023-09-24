@@ -10,13 +10,15 @@ from flask import (jsonify, make_response,
 from App.authenticate import create_state_key, get_token
 from flask import current_app
 from App import app
-from App.services import (add_tracks_playlist, create_playlist, get_all_top_tracks,
-                          get_recommended_tracks, get_top_tracks_uri, search_spotify,
-                          create_radar_chart, get_liked_track_ids, liked_track_ids_df,
-                          normalize_df)
-from App.DbMs.user_operations import (add_user, get_user_information)
+from App.services import (get_recommended_tracks,search_spotify,
+                          create_radar_chart, get_liked_track_ids)
+#from App.services import (add_tracks_playlist, create_playlist, get_all_top_tracks, get_top_tracks_uri)
+from App.services import (liked_track_ids_df, normalize_df,get_all_top_tracks, get_top_tracks_uri)
 
+from App.database_management.api_handler import SpotifyAPIHandler
+from App.database_management.user_operations import (add_user, get_user_information)
 
+SAPI = SpotifyAPIHandler(session)
 @app.route('/')
 @app.route('/index')
 def index():
@@ -79,7 +81,6 @@ def callback():
     current_user = get_user_information(session)
     session['user_id'] = current_user['id']
     logging.info('new user:' + session['user_id'])
-
     return redirect(session['previous_url'])
 
 
@@ -107,6 +108,7 @@ def tracks():
     if session.get('user_id') is None:
         current_user = get_user_information(session)
         session['user_id'] = current_user['id']
+
 
     top_track_ids = get_all_top_tracks(session)
     # if top_track_ids == None:
@@ -159,19 +161,19 @@ def createTopPlaylist():
 
     # create playlist, then get TopTracks, then fill playlist with TopTracks
     if 'short_term' in request.form:
-        playlist_id_short, playlist_uri = create_playlist(session, request.form['short_term_name'])
-        uri_list = get_top_tracks_uri(session, 'short_term', 50)
-        add_tracks_playlist(session, playlist_id_short, uri_list)
+        playlist_id_short, playlist_uri = SAPI.create_playlist(session, request.form['short_term_name'])
+        uri_list = SAPI.get_top_tracks_uri(session, 'short_term', 50)
+        SAPI.add_tracks_playlist(session, playlist_id_short, uri_list)
 
     if 'medium_term' in request.form:
-        playlist_id_medium, playlist_uri = create_playlist(session, request.form['medium_term_name'])
-        uri_list = get_top_tracks_uri(session, 'medium_term', 50)
-        add_tracks_playlist(session, playlist_id_medium, uri_list)
+        playlist_id_medium, playlist_uri = SAPI.create_playlist(session, request.form['medium_term_name'])
+        uri_list = SAPI.get_top_tracks_uri(session, 'medium_term', 50)
+        SAPI.add_tracks_playlist(session, playlist_id_medium, uri_list)
 
     if 'long_term' in request.form:
-        playlist_id_long, playlist_uri = create_playlist(session, request.form['long_term_name'])
-        uri_list = get_top_tracks_uri(session, 'long_term', 50)
-        add_tracks_playlist(session, playlist_id_long, uri_list)
+        playlist_id_long, playlist_uri = SAPI.create_playlist(session, request.form['long_term_name'])
+        uri_list = SAPI.get_top_tracks_uri(session, 'long_term', 50)
+        SAPI.add_tracks_playlist(session, playlist_id_long, uri_list)
 
     # if user selects autoupdate, add them to the database
     if 'auto_update' in request.form:
@@ -214,9 +216,9 @@ def createSelectedPlaylist():
     if 'valence_level' in request.form:
         tuneable_dict.update({'valence': request.form['slider_valence']})
 
-    playlist_id, playlist_uri = create_playlist(session, request.form['playlist_name'])
+    playlist_id, playlist_uri = SAPI.create_playlist(session, request.form['playlist_name'])
     uri_list = get_recommended_tracks(session, search, tuneable_dict)
-    add_tracks_playlist(session, playlist_id, uri_list)
+    SAPI.add_tracks_playlist(session, playlist_id, uri_list)
 
     # send back the created playlist URI so the user is redirected to Spotify
     return playlist_uri

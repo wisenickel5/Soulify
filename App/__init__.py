@@ -23,8 +23,8 @@ Base = declarative_base()
 # The User Model needs to be imported before
 # the .create_all() function is called
 from App.database_management.user_operations import User
-Base.metadata.create_all(engine)"""
-"""
+Base.metadata.create_all(engine)
+
 # Schedule updates for the TopTracks playlists
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler

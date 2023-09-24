@@ -1,4 +1,5 @@
-from App import Base, Session
+#from App import Base, Session
+from App.database import Base, Session
 import logging
 from App.authenticate import make_get_request
 from sqlalchemy import Column, Integer, String
@@ -17,8 +18,8 @@ class User(Base):
 		return '<User {}>'.format(self.username)
 
 def add_user(username, refresh_token, playlist_id_short=None, playlist_id_medium=None, playlist_id_long=None):
-	"""Function called when a user signs up for a new TopTracks playlist. If the user is new, 
-	then a new row is created with the appropriate column information. If the user already exists 
+	"""Function called when a user signs up for a new TopTracks playlist. If the user is new,
+	then a new row is created with the appropriate column information. If the user already exists
 	in the table, then only the playlist IDs are updated
 
 	Args:
