@@ -1,14 +1,5 @@
-import os
 import logging
-import spotipy
-import math
-from spotipy.oauth2 import SpotifyClientCredentials
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import matplotlib as mpl
-
-mpl.use('Agg')  # Use MatPlotLib without the GUI
-import matplotlib.pyplot as plt
 
 # Local Imports
 from flask import current_app
@@ -18,18 +9,20 @@ from App.database_management.db_actions import (db_add_tracks_playlist, db_clear
 from App.database import Session
 from App.database_management.user_operations import User
 
+mpl.use('Agg')  # Use MatPlotLib without the GUI
+
 
 class SpotifyAPIHandler:
     def __init__(self, session):
         self.session = session
+
     def create_playlist(self, playlist_name):
+
         """Creates a group of a songs (playlist) with the parameter session and pulls the
                  user inputted playlist name
-
-
                  Args:
-                #     session (Session): Flask Session Object
-                     playlist_name (String): Name of the playlist which is being called for
+                    self (Session): Flask Session Object
+                    playlist_name (String): Name of the playlist which is being called for
 
                  Returns:
                      Dictionary: id, uri
@@ -41,7 +34,9 @@ class SpotifyAPIHandler:
         if payload is None:
             return None
         return payload['id'], payload['uri']
-    def update_playlists(self):
+
+    @staticmethod
+    def update_playlists():
         """Function to literally update playlists. Authorization with spotify is checked. Authorization
         with user is also checked to see if playlist is deleted or not.
 
@@ -108,7 +103,7 @@ class SpotifyAPIHandler:
         """Using the spotify API to add singular tracks to a playlist.
 
         Args:
-            session (Session): Flask Session Object
+            self (Session): Flask Session Object
             playlist_id (int): ID for the playlist for spotify API to function
             uri_list (): [description] **Will come back to
 
@@ -125,15 +120,14 @@ class SpotifyAPIHandler:
         make_post_request(self.session, url, data)
 
         return
-    #
-    #
+
     def get_tracks_playlist(self, playlist_id, limit=100):
         """Get function which uses the spotify API along as the playlist ID in order to get all the
         tracks from the playlist.
 
 
         Args:
-            session (Session): Flask Session Object
+            self (Session): Flask Session Object
             playlist_id (int): ID for the playlist for spotify API to function
             limit (int, optional): The literal limit of songs per tracks on the playlist. Defaults to 100.
 
@@ -161,12 +155,12 @@ class SpotifyAPIHandler:
             offset += limit
 
         return track_uri
-#
+
     def get_all_top_tracks(self, limit=10):
         """Creates a list of tracks which are in the top 10 in the spotify API list.
 
         Args:
-            session (Session): Flask Session Object
+            self (Session): Flask Session Object
             limit (int, optional): Number of songs per top tracks. Defaults to 10. **
 
         Returns:
@@ -191,11 +185,12 @@ class SpotifyAPIHandler:
             track_ids.append(track_range_ids)
 
         return track_ids
+
     def get_top_tracks_uri(self, time, limit=25):
         """[summary]
 
         Args:
-            session (Session): Flask Session Object
+            self (Session): Flask Session Object
             time (int): The range of time per song.
             limit (int, optional): [description]. Defaults to 25.
 
@@ -214,15 +209,12 @@ class SpotifyAPIHandler:
             track_uri.append(track['uri'])
 
         return track_uri
-#
 
-#
-#
     def get_top_tracks_id(self, time, limit=25):
         """Creates a list of tracks which are top 25 on the spotify API list.
 
         Args:
-            session (Session): Flask Session Object
+            self (Session): Flask Session Object
             time (int): The range of time per song.
             limit (int, optional): Number of tracks per playlist. Defaults to 25.
 
@@ -231,7 +223,7 @@ class SpotifyAPIHandler:
         """
         url = 'https://api.spotify.com/v1/me/top/tracks'
         params = {'limit': limit, 'time_range': time}
-        payload = make_get_request(self.session, url, params)
+        payload = make_get_request(self, url, params)
 
         if payload is None:
             return None
@@ -241,132 +233,131 @@ class SpotifyAPIHandler:
             track_ids.append(track['id'])
 
         return track_ids
-#
-#
 
-#
-#
-def get_top_artists(session, time, limit=10):
-    """[summary]
+    def get_top_artists(self, time, limit=10):
+        """[summary]
 
-    Args:
-        session (Session): Flask Session Object
-        time (int): The range of time per song.
-        limit (int, optional): Gets the top 10 artists onto the list.. Defaults to 10. **
+        Args:
+            self (Session): Flask Session Object
+            time (int): The range of time per song.
+            limit (int, optional): Gets the top 10 artists onto the list. Defaults to 10. **
 
-    Returns:
-        list [String]: Returns the id of the top 10 Artists.
-    """
-    url = 'https://api.spotify.com/v1/me/top/artists'
-    params = {'limit': limit, 'time_range': time}
-    payload = make_get_request(session, url, params)
+        Returns:
+            list [String]: Returns the id of the top 10 Artists.
+        """
+        url = 'https://api.spotify.com/v1/me/top/artists'
+        params = {'limit': limit, 'time_range': time}
+        payload = make_get_request(self.session, url, params)
 
-    if payload is None:
-        return None
+        if payload is None:
+            return None
 
-    artist_ids = []
-    for artist in payload['items']:
-        artist_ids.append(artist['id'])
+        artist_ids = []
+        for artist in payload['items']:
+            artist_ids.append(artist['id'])
 
-    return artist_ids
-#
-#
-def get_recommended_tracks(session, search, tunable_dict, limit=25):
-    """This call pulls the top 25 tracks which are directed to a playlist.
+        return artist_ids
 
-    Args:
-        session (Session): Flask Session Object
-        search ([type]): [description]
-        tunable_dict (dict):
-        limit (int, optional): Number of tracks which the call will pull. Defaults to 25.
+    #
+    #
+    def get_recommended_tracks(self, search, tunable_dict, limit=25):
+        """This call pulls the top 25 tracks which are directed to a playlist.
 
-    Returns:
-        int (?): rec_track_uri
-    """
-    track_ids = ""
-    artist_ids = ""
-    for item in search:
+        Args:
+            self (Session): Flask Session Object
+            search ([type]): [description]
+            tunable_dict (dict):
+            limit (int, optional): Number of tracks which the call will pull. Defaults to 25.
 
-        # tracks IDs start with a 't:' to identify them
-        if item[0:2] == 't:':
-            track_ids += item[2:] + ","
+        Returns:
+            int (?): rec_track_uri
+        """
+        track_ids = ""
+        artist_ids = ""
+        for item in search:
 
-        # artist IDs start with an 'a:' to identify them
-        if item[0:2] == 'a:':
-            artist_ids += item[2:] + ","
+            # tracks IDs start with a 't:' to identify them
+            if item[0:2] == 't:':
+                track_ids += item[2:] + ","
 
-    url = 'https://api.spotify.com/v1/recommendations'
-    params = {'limit': limit, 'seed_tracks': track_ids[0:-1], 'seed_artists': artist_ids[0:-1]}
-    params.update(tunable_dict)
-    payload = make_get_request(session, url, params)
+            # artist IDs start with an 'a:' to identify them
+            if item[0:2] == 'a:':
+                artist_ids += item[2:] + ","
 
-    if payload is None:
-        return None
+        url = 'https://api.spotify.com/v1/recommendations'
+        params = {'limit': limit, 'seed_tracks': track_ids[0:-1], 'seed_artists': artist_ids[0:-1]}
+        params.update(tunable_dict)
+        payload = make_get_request(self.session, url, params)
 
-    rec_track_uri = []
+        if payload is None:
+            return None
 
-    for track in payload['tracks']:
-        rec_track_uri.append(track['uri'])
+        rec_track_uri = []
 
-    return rec_track_uri
-#
-#
-def get_liked_track_ids(self):
-    url = 'https://api.spotify.com/v1/me/tracks'
-    payload = make_get_request(self, url)
+        for track in payload['tracks']:
+            rec_track_uri.append(track['uri'])
 
-    if payload is None:
-        return None
+        return rec_track_uri
 
-    liked_tracks_ids = []
-    for track in payload['items']:
-        liked_id = track['track'].get('id', None)
-        if liked_id:
-            current_app.logger.info(f"\n\n Track ID: {liked_id}")
-            liked_tracks_ids.append(liked_id)
+    #
+    #
+    def get_liked_track_ids(self):
+        url = 'https://api.spotify.com/v1/me/tracks'
+        payload = make_get_request(self.session, url)
 
-    return liked_tracks_ids
-#
-#
-def search_spotify(session, search, limit=4):
-    """Searches the entire spotify library using the spotify API call
+        if payload is None:
+            return None
 
-    Args:
-        session (Session): Flask Session Object
-        search ([type]): [description]
-        limit (int, optional): Limit of searches shown in the search bar. Defaults to 4.
+        liked_tracks_ids = []
+        for track in payload['items']:
+            liked_id = track['track'].get('id', None)
+            if liked_id:
+                current_app.logger.info(f"\n\n Track ID: {liked_id}")
+                liked_tracks_ids.append(liked_id)
 
-    Returns:
-        dictionary: JSON Response
-    """
-    url = 'https://api.spotify.com/v1/search'
-    params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
-    payload = make_get_request(session, url, params)
+        return liked_tracks_ids
 
-    if payload is None:
-        return None
+    #
+    #
+    def search_spotify(self, search, limit=4):
+        """Searches the entire spotify library using the spotify API call
 
-    # response includes both artist and track names
-    results = []
-    for item in payload['artists']['items']:
-        # append 'a:' to artist URIs so artists and tracks can be distinguished
-        results.append([item['name'], 'a:' + item['id'], item['popularity']])
+        Args:
+            self (Session): Flask Session Object
+            search ([type]): [description]
+            limit (int, optional): Limit of searches shown in the search bar. Defaults to 4.
 
-    for item in payload['tracks']['items']:
+        Returns:
+            dictionary: JSON Response
+        """
+        url = 'https://api.spotify.com/v1/search'
+        params = {'limit': limit, 'q': search + "*", 'type': 'artist,track'}
+        payload = make_get_request(self.session, url, params)
 
-        # track names will include both the name of the track and all artists
-        full_name = item['name'] + " - "
-        for artist in item['artists']:
-            full_name += artist['name'] + ", "
+        if payload is None:
+            return None
 
-        # append 't:' to track URIs so tracks and artists can be distinguished
-        results.append([full_name[0:-2], 't:' + item['id'], item['popularity']])
+        # response includes both artist and track names
+        results = []
+        for item in payload['artists']['items']:
+            # append 'a:' to artist URIs so artists and tracks can be distinguished
+            results.append([item['name'], 'a:' + item['id'], item['popularity']])
 
-    # sort them by popularity (the highest first)
-    results.sort(key=lambda x: int(x[2]), reverse=True)
+        for item in payload['tracks']['items']:
 
-    results_json = []
-    for item in results:
-        results_json.append({'label': item[0], 'value': item[1]})
+            # track names will include both the name of the track and all artists
+            full_name = item['name'] + " - "
+            for artist in item['artists']:
+                full_name += artist['name'] + ", "
 
-    return results_json
+            # append 't:' to track URIs so tracks and artists can be distinguished
+            results.append([full_name[0:-2], 't:' + item['id'], item['popularity']])
+
+        # sort them by popularity (the highest first)
+        results.sort(key=lambda x: int(x[2]), reverse=True)
+
+        results_json = []
+        for item in results:
+            results_json.append({'label': item[0], 'value': item[1]})
+
+        return results_json

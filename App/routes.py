@@ -10,15 +10,14 @@ from flask import (jsonify, make_response,
 from App.authenticate import create_state_key, get_token
 from flask import current_app
 from App import app
-from App.services import (get_recommended_tracks,search_spotify,
-                          create_radar_chart, get_liked_track_ids)
-#from App.services import (add_tracks_playlist, create_playlist, get_all_top_tracks, get_top_tracks_uri)
-from App.services import (liked_track_ids_df, normalize_df,get_all_top_tracks, get_top_tracks_uri)
 
 from App.database_management.api_handler import SpotifyAPIHandler
+from App.database_management.data_processing import DataProcessing
 from App.database_management.user_operations import (add_user, get_user_information)
 
 SAPI = SpotifyAPIHandler(session)
+
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -45,7 +44,8 @@ def authorize():
 
     # redirect user to Spotify authorization page
     authorize_url = 'https://accounts.spotify.com/en/authorize?'
-    parameters = 'client_id=' + client_id + '&response_type=code' + '&redirect_uri=' + redirect_uri + '&scope=' + scope + '&state=' + state_key
+    parameters = ('client_id=' + client_id + '&response_type=code' + '&redirect_uri=' +
+                  redirect_uri + '&scope=' + scope + '&state=' + state_key)
     current_app.logger.info(authorize_url + parameters)
     response = make_response(redirect(authorize_url + parameters))
 
@@ -109,18 +109,18 @@ def tracks():
         current_user = get_user_information(session)
         session['user_id'] = current_user['id']
 
-
-    top_track_ids = get_all_top_tracks(session)
+    top_track_ids = SAPI.get_all_top_tracks()
     # if top_track_ids == None:
     # return render_template('index.html', error='Failed to gather top tracks.')
 
-    liked_track_ids = get_liked_track_ids(session)
+    liked_track_ids = SAPI.get_liked_track_ids()
     if liked_track_ids is None:
         return render_template('index.html', error='Failed to get liked tracks')
     elif liked_track_ids is not None:
-        lt_df = liked_track_ids_df(liked_track_ids)
-        music_attributes = normalize_df(lt_df)
-        create_radar_chart(music_attributes)
+        dp = DataProcessing(liked_track_ids)
+        lt_df = dp.liked_track_ids_df()
+        music_attributes = dp.normalize_df(lt_df)
+        dp.create_radar_chart(music_attributes)
 
     return render_template('tracks.html', track_ids=top_track_ids)
 
@@ -145,7 +145,7 @@ def create():
 
 
 @app.route('/tracks/topplaylist', methods=['POST'])
-def createTopPlaylist():
+def create_top_playlist():
     """
     Activates whenever the user saves a new playlist in which, creates
     another new entity of playlists and stores new tracks.
@@ -161,19 +161,19 @@ def createTopPlaylist():
 
     # create playlist, then get TopTracks, then fill playlist with TopTracks
     if 'short_term' in request.form:
-        playlist_id_short, playlist_uri = SAPI.create_playlist(session, request.form['short_term_name'])
-        uri_list = SAPI.get_top_tracks_uri(session, 'short_term', 50)
-        SAPI.add_tracks_playlist(session, playlist_id_short, uri_list)
+        playlist_id_short, playlist_uri = SAPI.create_playlist(request.form['short_term_name'])
+        uri_list = SAPI.get_top_tracks_uri('short_term', 50)
+        SAPI.add_tracks_playlist(playlist_id_short, uri_list)
 
     if 'medium_term' in request.form:
-        playlist_id_medium, playlist_uri = SAPI.create_playlist(session, request.form['medium_term_name'])
-        uri_list = SAPI.get_top_tracks_uri(session, 'medium_term', 50)
-        SAPI.add_tracks_playlist(session, playlist_id_medium, uri_list)
+        playlist_id_medium, playlist_uri = SAPI.create_playlist(request.form['medium_term_name'])
+        uri_list = SAPI.get_top_tracks_uri('medium_term', 50)
+        SAPI.add_tracks_playlist(playlist_id_medium, uri_list)
 
     if 'long_term' in request.form:
-        playlist_id_long, playlist_uri = SAPI.create_playlist(session, request.form['long_term_name'])
-        uri_list = SAPI.get_top_tracks_uri(session, 'long_term', 50)
-        SAPI.add_tracks_playlist(session, playlist_id_long, uri_list)
+        playlist_id_long, playlist_uri = SAPI.create_playlist(request.form['long_term_name'])
+        uri_list = SAPI.get_top_tracks_uri('long_term', 50)
+        SAPI.add_tracks_playlist(playlist_id_long, uri_list)
 
     # if user selects autoupdate, add them to the database
     if 'auto_update' in request.form:
@@ -185,7 +185,7 @@ def createTopPlaylist():
 
 
 @app.route('/create/playlist', methods=['POST'])
-def createSelectedPlaylist():
+def create_selected_playlist():
     """
     Activates when the user useses the create feature. The users
     artist/track id before date, are gathered to fill playlist as well as
@@ -216,9 +216,9 @@ def createSelectedPlaylist():
     if 'valence_level' in request.form:
         tuneable_dict.update({'valence': request.form['slider_valence']})
 
-    playlist_id, playlist_uri = SAPI.create_playlist(session, request.form['playlist_name'])
-    uri_list = get_recommended_tracks(session, search, tuneable_dict)
-    SAPI.add_tracks_playlist(session, playlist_id, uri_list)
+    playlist_id, playlist_uri = SAPI.create_playlist(request.form['playlist_name'])
+    uri_list = SAPI.get_recommended_tracks(search, tuneable_dict)
+    SAPI.add_tracks_playlist(playlist_id, uri_list)
 
     # send back the created playlist URI so the user is redirected to Spotify
     return playlist_uri
@@ -232,6 +232,6 @@ def autocomplete():
     outcomes.
     """
     search = request.args.get('q')
-    results = search_spotify(session, search)
+    results = SAPI.search_spotify(search)
 
     return jsonify(matching_results=results)
