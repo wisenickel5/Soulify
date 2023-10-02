@@ -3,7 +3,7 @@ from flask_bootstrap import Bootstrap
 #from extensions import bootstrap, scheduler
 from App.scheduler import init_scheduler
 from App.database import init_db
-import config
+from App import config
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -13,4 +13,5 @@ init_db()
 init_scheduler()
 
 from App import routes
+
 bootstrap = Bootstrap(app)

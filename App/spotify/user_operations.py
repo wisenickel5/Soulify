@@ -1,7 +1,7 @@
 #from App import Base, Session
 from App.database import Base, Session
 import logging
-from App.authenticate import make_get_request
+from App.spotify.authenticate import make_get_request
 from sqlalchemy import Column, Integer, String
 
 class User(Base):

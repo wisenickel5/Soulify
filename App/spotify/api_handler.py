@@ -3,11 +3,11 @@ import matplotlib as mpl
 
 # Local Imports
 from flask import current_app
-from App.authenticate import (make_get_request, make_post_request, refresh_token)
-from App.database_management.db_actions import (db_add_tracks_playlist, db_clear_playlist,
-                                                db_get_top_tracks_uri)
+from App.spotify.authenticate import (make_get_request, make_post_request, refresh_token)
+from App.spotify.db_actions import (db_add_tracks_playlist, db_clear_playlist,
+                                    db_get_top_tracks_uri)
 from App.database import Session
-from App.database_management.user_operations import User
+from App.spotify.user_operations import User
 
 mpl.use('Agg')  # Use MatPlotLib without the GUI
 

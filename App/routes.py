@@ -7,13 +7,13 @@ from flask import (jsonify, make_response,
                    request, session)
 
 # Local Imports
-from App.authenticate import create_state_key, get_token
+from App.spotify.authenticate import create_state_key, get_token
 from flask import current_app
 from App import app
 
-from App.database_management.api_handler import SpotifyAPIHandler
-from App.database_management.data_processing import DataProcessing
-from App.database_management.user_operations import (add_user, get_user_information)
+from App.spotify.api_handler import SpotifyAPIHandler
+from App.spotify.data_processing import DataProcessing
+from App.spotify.user_operations import (add_user, get_user_information)
 
 SAPI = SpotifyAPIHandler(session)
 
