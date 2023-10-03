@@ -50,7 +50,7 @@ class DataProcessing:
             popularity = meta['popularity']
             song_meta['popularity'].append(popularity)
 
-        song_meta_df = pd.DataFrame.from_dict(song_meta)
+        # song_meta_df = pd.DataFrame.from_dict(song_meta)
 
         # Check the song feature
         features = sp.audio_features(song_meta['id'])
@@ -92,8 +92,8 @@ class DataProcessing:
     def create_radar_chart(music_attributes: pd.DataFrame):
         # Set Plot Attributes
         plt.style.use('dark_background')
-        fig = plt.figure(figsize=(12, 8))
-        ax = fig.add_subplot(111, projection="polar")  # Axes Subplot
+        # fig = plt.figure(figsize=(12, 8))
+        # ax = fig.add_subplot(111, projection="polar")  # Axes Subplot
         # Convert Column names to a list
         categories = list(music_attributes.columns)
         value = list(music_attributes.mean())
