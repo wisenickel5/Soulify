@@ -5,7 +5,6 @@ import time
 import random as rand
 import logging
 
-
 def create_state_key(size):
     """Provides a state key for authorization request. To prevent forgery attacks, the state key
     is used to make sure that the response comes from the same place that the request was sent from.
@@ -17,8 +16,8 @@ def create_state_key(size):
 	Returns:
 		string: A randomly generated code with the length of the size parameter
 	"""
-    return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
+    return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
 def get_token(code):
     """Requests an access token from Spotify API. This function is only called if
@@ -30,6 +29,7 @@ def get_token(code):
 	Returns:
 		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
 	"""
+
     grant_type = current_app.config['GRANT_TYPE']
     redirect_uri = current_app.config['REDIRECT_URI']
     client_id = current_app.config['CLIENT_ID']
@@ -57,47 +57,22 @@ def get_token(code):
         return None
 
 
-def check_token_status(session):
-    """Determines if the new access token must be requested based on time expiration
-	of previous token.
-
-	Args:
-		session (Session): Flask Session Object
-
-	Returns:
-		string: Success log
-	"""
-    payload = None
-    if time.time() > session['token_expiration']:
-        payload = refresh_token(session['refresh_token'])
-
-    if payload is not None:
-        session['token'] = payload[0]
-        session['token_expiration'] = time.time() + payload[1]
-    else:
-        logging.error('checkTokenStatus')
-        return None
-    return "Success"
-
-
 def refresh_token(token):
     """
 	POST Request is made to Spotify API with refresh token (only if access token and
 	refresh token were previously acquired) creating a new access token
 
 	Args:
-		token (string)
+		refresh_token (string)
 
 	Returns:
 		tuple(str, str): Access Token, Expiration Time
 	"""
-    token_url = 'https://accounts.spotify.com/api/token'
-    authorization = current_app.config['AUTHORIZATION']
 
-    headers = {'Authorization': authorization, 'Accept': 'application/json',
-               'Content-Type': 'application/x-www-form-urlencoded'}
+    token_url = 'https://accounts.spotify.com/api/token'
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     body = {'refresh_token': token, 'grant_type': 'refresh_token'}
-    post_response = requests.post(token_url, headers=headers, data=body)
+    post_response = requests.post(token_url, headers=headers, data=body, auth=(current_app.config['CLIENT_ID'], current_app.config['CLIENT_SECRET']))
 
     # 200 code indicates access token was properly granted
     if post_response.status_code == 200:
@@ -108,6 +83,29 @@ def refresh_token(token):
     else:
         logging.error('refreshToken:' + str(post_response.status_code))
         return None
+
+
+def check_token_status(session):
+    """Determines if the new access token must be requested based on time expiration
+	of previous token.
+
+	Args:
+		session (Session): Flask Session Object
+
+	Returns:
+		string: Success log
+	"""
+
+    if time.time() > session['token_expiration']:
+        payload = refresh_token(session['refresh_token'])
+
+        if payload is not None:
+            session['token'] = payload[0]
+            session['token_expiration'] = time.time() + payload[1]
+        else:
+            logging.error('checkTokenStatus')
+            return None
+    return "Success"
 
 
 def make_get_request(session, url, params={}):

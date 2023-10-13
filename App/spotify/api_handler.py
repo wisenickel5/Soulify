@@ -223,7 +223,7 @@ class SpotifyAPIHandler:
         """
         url = 'https://api.spotify.com/v1/me/top/tracks'
         params = {'limit': limit, 'time_range': time}
-        payload = make_get_request(self, url, params)
+        payload = make_get_request(self.session, url, params)
 
         if payload is None:
             return None

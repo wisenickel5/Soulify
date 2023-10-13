@@ -99,6 +99,7 @@ def tracks():
     This page shows most played tracks by the user over multiple
     time periods.
     """
+
     # make sure application is authorized for user
     if session.get('token') is None or session.get('token_expiration') is None:
         session['previous_url'] = '/tracks'
