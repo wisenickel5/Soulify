@@ -6,14 +6,14 @@ def db_add_tracks_playlist(access_token, playlist_id, uri_list):
     Submits ADD Request to Spotify API with resource to be added
     until a status code that equals 201 is received or log the error.
 
-	Args:
-		access_token (str): Key used for authorization check
-		playlist_id (str): Key used to identify the playlist of tracks
-		uri_list (list): A list of tracks as URIs
+    Args:
+        access_token (str): Key used for authorization check
+        playlist_id (str): Key used to identify the playlist of tracks
+        uri_list (list): A list of tracks as URIs
 
-	Returns:
-		string : Success log
-	"""
+    Returns:
+        string : Success log
+    """
     url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
     headers = {"Authorization": "Bearer {}".format(access_token), 'Accept': 'application/json',
@@ -37,15 +37,15 @@ def db_get_tracks_playlist(access_token, playlist_id, limit=100):
     Submits GET Request to Spotify API with resource to receive tracks
     until a status code that equals 200 is received or log the error.
 
-	Args:
-		access_token:
-		playlist_id:
-		limit (int): Maximum number of tracks per request
+    Args:
+        access_token:
+        playlist_id:
+        limit (int): Maximum number of tracks per request
 
-	Returns:
-		string : Success log
-		track_uri (list): List of tracks URI from playlist
-	"""
+    Returns:
+        string : Success log
+        track_uri (list): List of tracks URI from playlist
+    """
     url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
 
     headers = {"Authorization": "Bearer {}".format(access_token)}
@@ -77,12 +77,12 @@ def db_clear_playlist(access_token, playlist_id):
     Submits DELETE Request to Spotify API with resource to remove tracks
     until a status code that equals 200 is received or log the error.
 
-	Args:
-		access_token (str): Key used for authorization check
-		playlist_id (str): Key used to identify the playlist of tracks
-	Returns:
-		string : Success log
-	"""
+    Args:
+        access_token (str): Key used for authorization check
+        playlist_id (str): Key used to identify the playlist of tracks
+    Returns:
+        string : Success log
+    """
     url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks'
     uri_list = db_get_tracks_playlist(access_token, playlist_id)
 
@@ -103,17 +103,17 @@ def db_clear_playlist(access_token, playlist_id):
 
 def db_get_top_tracks_uri(access_token, time: str, limit: int = 25):
     """
-	Submits GET Request to Spotify API with resource to receive tracks
-	until a status code that equals 200 is received or log the error.
+    Submits GET Request to Spotify API with resource to receive tracks
+    until a status code that equals 200 is received or log the error.
 
-	Args:
-		access_token:
-		time (str): Maximum number of tracks per request
-		limit (int): Maximum number of tracks per request
+    Args:
+        access_token:
+        time (str): Maximum number of tracks per request
+        limit (int): Maximum number of tracks per request
 
-	Returns:
-		track_uri (list): List of tracks URI from playlist
-	"""
+    Returns:
+        track_uri (list): List of tracks URI from playlist
+    """
     url = 'https://api.spotify.com/v1/me/top/tracks'
     params = {'limit': limit, 'time_range': time}
     headers = {"Authorization": "Bearer {}".format(access_token)}

@@ -109,11 +109,12 @@ class DataProcessing:
         plt.xticks(angles[:-1], categories, size=15)
         plt.yticks(color='grey', size=15)
         plt.ioff()  # Turn Interactive Mode Off
-    # TODO: How can Radar Chart be saved on Heroku?
-    # img_dir = os.path.abspath("../Soulify/App/static/")
-    # radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
-    # # Check if the png exists, if it does delete it
-    # if os.path.isfile(radar_chart_file):
-    # 	current_app.logger.info("Deleting existing Radar Chart png...")
-    # 	os.remove(radar_chart_file)
-    # fig.savefig(img_dir + "/images/radar-chart.png")
+
+        # TODO: How can Radar Chart be saved on Heroku?
+        # img_dir = os.path.abspath("../Soulify/App/static/")
+        # radar_chart_file = os.path.abspath('../Soulify/App/static/images/radar-chart.png')
+        # # Check if the png exists, if it does delete it
+        # if os.path.isfile(radar_chart_file):
+        # 	current_app.logger.info("Deleting existing Radar Chart png...")
+        # 	os.remove(radar_chart_file)
+        # fig.savefig(img_dir + "/images/radar-chart.png")

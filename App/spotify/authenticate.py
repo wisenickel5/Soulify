@@ -5,31 +5,33 @@ import time
 import random as rand
 import logging
 
+
 def create_state_key(size):
-    """Provides a state key for authorization request. To prevent forgery attacks, the state key
+    """
+    Provides a state key for authorization request. To prevent forgery attacks, the state key
     is used to make sure that the response comes from the same place that the request was sent from.
-	Reference: https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
-	
-	Args:
-		size (int): Determines the size of the State Key
+    Reference: https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
 
-	Returns:
-		string: A randomly generated code with the length of the size parameter
-	"""
+    Args:
+        size (int): Determines the size of the State Key
 
+    Returns:
+        string: A randomly generated code with the length of the size parameter
+    """
     return ''.join(rand.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
+
 def get_token(code):
-    """Requests an access token from Spotify API. This function is only called if
-	the current user does not have a refresh token.
+    """
+    Requests an access token from Spotify API. This function is only called if
+    the current user does not have a refresh token.
 
-	Args:
-		code (string): Value returned from HTTP GET Request
+    Args:
+        code (string): Value returned from HTTP GET Request
 
-	Returns:
-		tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
-	"""
-
+    Returns:
+        tuple(str, str, str) : Access Token, Refresh Token, Expiration Time
+    """
     grant_type = current_app.config['GRANT_TYPE']
     redirect_uri = current_app.config['REDIRECT_URI']
     client_id = current_app.config['CLIENT_ID']
@@ -59,20 +61,22 @@ def get_token(code):
 
 def refresh_token(token):
     """
-	POST Request is made to Spotify API with refresh token (only if access token and
-	refresh token were previously acquired) creating a new access token
+    POST Request is made to Spotify API with refresh token (only if access token and
+    refresh token were previously acquired) creating a new access token
 
-	Args:
-		refresh_token (string)
+    Args:
+        token (string)
 
-	Returns:
-		tuple(str, str): Access Token, Expiration Time
-	"""
-
+    Returns:
+        tuple(str, str): Access Token, Expiration Time
+    """
     token_url = 'https://accounts.spotify.com/api/token'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     body = {'refresh_token': token, 'grant_type': 'refresh_token'}
-    post_response = requests.post(token_url, headers=headers, data=body, auth=(current_app.config['CLIENT_ID'], current_app.config['CLIENT_SECRET']))
+    post_response = requests.post(token_url,
+                                  headers=headers,
+                                  data=body,
+                                  auth=(current_app.config['CLIENT_ID'], current_app.config['CLIENT_SECRET']))
 
     # 200 code indicates access token was properly granted
     if post_response.status_code == 200:
@@ -87,14 +91,14 @@ def refresh_token(token):
 
 def check_token_status(session):
     """Determines if the new access token must be requested based on time expiration
-	of previous token.
+    of previous token.
 
-	Args:
-		session (Session): Flask Session Object
+    Args:
+        session (Session): Flask Session Object
 
-	Returns:
-		string: Success log
-	"""
+    Returns:
+        string: Success log
+    """
 
     if time.time() > session['token_expiration']:
         payload = refresh_token(session['refresh_token'])
@@ -110,17 +114,17 @@ def check_token_status(session):
 
 def make_get_request(session, url, params={}):
     """
-	Recursively make GET Request to Spotify API with necessary headers
-	until a status code that equals 200 is received or log the error.
+    Recursively make GET Request to Spotify API with necessary headers
+    until a status code that equals 200 is received or log the error.
 
-	Args:
-		session (Session): Flask Session Object
-		url (string): URL
-		params (dict, optional): Parameters being sent to API. Defaults to {}.
+    Args:
+        session (Session): Flask Session Object
+        url (string): URL
+        params (dict, optional): Parameters being sent to API. Defaults to {}.
 
-	Returns:
-		dictionary: JSON Response
-	"""
+    Returns:
+        dictionary: JSON Response
+    """
     headers = {'Accept': 'application/json',
                'Content-Type': 'application/json',
                'Authorization': f"Bearer {session['token']}"}
@@ -143,15 +147,15 @@ def make_put_request(session, url, params={}, data={}):
     Recursively make PUT Request to Spotify API with necessary headers
     until a status code that equals 204, 403, 404 is received or log the error.
 
-	Args:
-		session (Session): Flask Session Object
-		url (string): URL
-		params (dict, optional): Parameters being sent to API. Defaults to {}.
-		data (dict, optional): Resource to be created or replaced. Defaults to {}.
+    Args:
+        session (Session): Flask Session Object
+        url (string): URL
+        params (dict, optional): Parameters being sent to API. Defaults to {}.
+        data (dict, optional): Resource to be created or replaced. Defaults to {}.
 
-	Returns:
-		int: Status Code
-	"""
+    Returns:
+        int: Status Code
+    """
     headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json',
                'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.put(url, headers=headers, params=params, data=data)
@@ -172,14 +176,14 @@ def make_post_request(session, url, data):
     """Recursively make POST Request to Spotify API with resource to be created
     until a status code that equals 201/204 is received or log the error.
 
-	Args:
-		session (Session): Flask Session Object
-		url (string): URL
-		data (dict): Resource to be created
+    Args:
+        session (Session): Flask Session Object
+        url (string): URL
+        data: Resource to be created
 
-	Returns:
-		[type]: [description]
-	"""
+    Returns:
+        [type]: [description]
+    """
     headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json',
                'Content-Type': 'application/json'}
     response = requests.post(url, headers=headers, data=data)
@@ -206,13 +210,13 @@ def make_delete_request(session, url, data):
     until a status code that equals 200 is received or log the error.
 
     Args:
-		session (Session): Flask Session Object
-		url (string): URL
-		data (dict): Resource to be deleted
+        session (Session): Flask Session Object
+        url (string): URL
+        data (dict): Resource to be deleted
 
-	Returns:
-		dict : JSON Response
-	"""
+    Returns:
+        dict : JSON Response
+    """
     headers = {"Authorization": "Bearer {}".format(session['token']), 'Accept': 'application/json',
                'Content-Type': 'application/json'}
     response = requests.delete(url, headers=headers, data=data)

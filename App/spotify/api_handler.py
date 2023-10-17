@@ -186,12 +186,12 @@ class SpotifyAPIHandler:
 
         return track_ids
 
-    def get_top_tracks_uri(self, time, limit=25):
+    def get_top_tracks_uri(self, time: str, limit=25):
         """[summary]
 
         Args:
             self (Session): Flask Session Object
-            time (int): The range of time per song.
+            time (str): The range of time per song.
             limit (int, optional): [description]. Defaults to 25.
 
         Returns:

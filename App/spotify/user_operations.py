@@ -23,16 +23,16 @@ def add_user(username, refresh_token, playlist_id_short=None, playlist_id_medium
     then a new row is created with the appropriate column information. If the user already exists
     in the table, then only the playlist IDs are updated
 
-	Args:
-		username (string): the username that is store in the User table in the database
-		refresh_token (string): the refresh_token that is store in the User table in the database
-		playlist_id_short (string): The playlist_id that is stored in the User table in the database for new users
-		playlist_id_medium (string): The playlist_id that is stored in the User table in the database for new users
-		playlist_id_long (string): The playlist_id that is stored in the User table in the database for new users
+    Args:
+        username (string): the username that is store in the User table in the database
+        refresh_token (string): the refresh_token that is store in the User table in the database
+        playlist_id_short (string): The playlist_id that is stored in the User table in the database for new users
+        playlist_id_medium (string): The playlist_id that is stored in the User table in the database for new users
+        playlist_id_long (string): The playlist_id that is stored in the User table in the database for new users
 
-	Returns:
-		str: username
-	"""
+    Returns:
+        str: username
+    """
     session = Session()
     id_exists = session.query(User.id).filter_by(username=username).scalar()
 
@@ -63,11 +63,11 @@ def add_user(username, refresh_token, playlist_id_short=None, playlist_id_medium
 def get_user_information(session):
     """Gets user information such as username, user ID, and user location
     Args:
-		session (Session): Flask Session Object
+        session (Session): Flask Session Object
 
-	Returns:
-		dict : JSON Response
-	"""
+    Returns:
+        dict : JSON Response
+    """
 
     url = 'https://api.spotify.com/v1/me'
     payload = make_get_request(session, url)
