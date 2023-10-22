@@ -400,11 +400,13 @@ footer p {
 
 /* Three.js */
 #canvas {
-  display: block;
+  display: flex;
   position: static;
   border: 2px solid black;
   width: 100vw;
   height: 320px;
+  justify-content: center;
+  align-items: center;
 }
 
 .container-fluid {
