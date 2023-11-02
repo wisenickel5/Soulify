@@ -425,22 +425,29 @@ height: 30px;
 }
 
 #logo{
-font-style: italic;
-font-family:Helvetica;
-font-size:250px;
-line-height=50;
-color:#ffffff;
-  text-shadow: 0 2px 1px #747474FF,
-       -1px 3px 1px #7a7a7aFF,
-      -2px 5px 1px #838383E6,
-      -3px 7px 1px #8e8e8eCC,
-      -4px 9px 1px #9f9f9fB3,
-      -5px 11px 1px #a7a7a799,
-      -6px 13px 1px #b6b6b680,
-      -7px 15px 1px #c8c8c866,
-      -8px 17px 1px #d2d2d24D,
-      -9px 19px 1px #e6e6e633,
-      -10px 21px 1px #efefef1A;
+ font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    font-size: 70px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+
+}
+#logo:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease-in-out;
+}
+
+#logo:hover:after {
+    width: 100%;
 }
 
 .container-fluid {
