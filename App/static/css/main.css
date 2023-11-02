@@ -7,6 +7,7 @@ body {
   display: block;
   color: #000!important;
   background: linear-gradient(90deg, #ffd89b 0%, #8E978B 50%, #19547b 77%)!important;
+
 }
 
 div {
@@ -198,7 +199,7 @@ footer {
 }
 
 .text-muted{
-  white-space: nowrap;
+  display:inline-block;
 }
 
 footer p {
@@ -400,15 +401,58 @@ footer p {
 
 /* Three.js */
 #canvas {
-  display: block;
+  display: flex;
   position: static;
   border: 2px solid black;
   width: 100vw;
   height: 320px;
+  justify-content: center;
+  align-items: center;
+}
+
+#cbody{
+display:flex;
+position: static;
+padding-top: 10px;
+padding-bottom: 10px;
+
+align-items:center;
+justify-items:stretch;
+
+height: 30px;
+
+
+}
+
+#logo{
+ font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    font-size: 70px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+
+}
+#logo:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease-in-out;
+}
+
+#logo:hover:after {
+    width: 100%;
 }
 
 .container-fluid {
   padding-right: 0% !important;
   padding-left: 0% !important;
+  overflow: hidden;
 }
 
