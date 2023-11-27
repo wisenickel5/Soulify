@@ -145,6 +145,15 @@ def create():
     return render_template('create.html')
 
 
+@app.route('/project', methods=['GET'])
+def project():
+    """
+    This page displays policies and information about the
+    features on the app.
+    """
+    return render_template('project.html')
+
+
 @app.route('/tracks/topplaylist', methods=['POST'])
 def create_top_playlist():
     """
